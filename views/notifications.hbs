@@ -1,0 +1,70 @@
+<div id="notifications-list">
+    {{#if isSingle}}
+        <div class="card">
+            <div class="card-header clearfix">
+                <img src="{{notification.image}}" alt="">
+                <strong style="float: left;">
+                    <a href="/user/{{notification.origin}}">
+                        {{notification.username}}
+                    </a>
+                </strong>
+            </div>
+            <div class="card-body clearfix">
+                <p>{{notification.message}}</p>
+                <a href="{{notification.link}}" class="btn">Check it out</a>
+            </div>
+            <div class="card-footer clearfix">
+                <small style="float: right;">{{notification.date}}</small>
+            </div>
+        </div>
+    {{else}}
+        {{#if count}}
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="5"> 
+                            <input type="checkbox" class="" id="select-all">
+
+                            <form action="/notifications/mark-all-as-read" method="POST">
+                                <input type="hidden" name="ids" class="ids">
+                                <button> Mark selected as read</button>
+                            </form>
+                            <form action="/notifications/delete-all" method="POST">
+                                <input type="hidden" name="ids" class="ids">
+                                <button> <i class="far fa-trash-alt"></i> Delete Selected</button>
+                            </form>
+                        </th>
+                    </tr>
+                </thead>  
+                <tbody>
+                    {{#each notifications}}
+                        <tr>
+                            <td><input type="checkbox" name="notification" class="" value="{{_id}}"></td>
+                            <td><img src="{{image}}" alt=""></td>
+                            <td>
+                                <a href="/notifications/{{_id}}">
+                                    {{#if status}}
+                                        {{message}}
+                                    {{else}}
+                                        <strong>{{message}}</strong>
+                                    {{/if}}
+                                </a> 
+                            </td>
+                            <td><small>{{date}}</small></td>
+                            <td>
+                                <a href="/notifications/{{_id}}/delete"><i class="far fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            <div style="text-align: left">
+                <div class="control"><i class="fas fa-chevron-left"></i></div>
+                <div class="control"><i class="fas fa-chevron-right"></i></div>
+                <span class="total">10{{toal}}</span> of <span>50{{page}}</span>
+            </div>
+        {{else}}
+            <h2 style="color: gray; text-align: center;">No notifications found</h2>
+        {{/if}}
+    {{/if}}
+</div>

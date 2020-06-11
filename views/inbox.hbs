@@ -1,0 +1,27 @@
+<div id="contacts-list">
+	<input type="text" placeholder="Search" id="search">
+	{{#each chats}}
+		<div class="contact clearfix" data-userid="{{contact}}" data-chatid="{{chatId}}">
+			<img src="{{image}}" alt="">
+			<span class="name">
+				<b>{{username}}</b>
+			</span>
+			<p style="color: gray;">{{message}}</p>
+			<small></small>
+		</div>
+	{{/each}}
+</div>
+<div id="messages-list" class="">
+	<div id="msg-list-header" class="clearfix">
+		<img src="{{!-- image --}}" alt="">
+		<h5 class="name">{{!-- username --}}</h5>
+	</div>
+	<div id="msg-list-body">
+		<div class="messages clearfix">
+			{{!-- Here goes the message --}}
+		</div>
+	</div>
+	<div id="msg-list-footer">
+		<input type="text" id="message" placeholder="Type your message here...." data-userid="" data-chatid="">
+	</div>
+</div>

@@ -1,0 +1,167 @@
+.container
+{
+    text-align: center;
+}
+
+#notifications-list
+{
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+    text-transform: capitalize;
+    margin-top: 50px;
+}
+
+table
+{
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+tr:last-child td:last-child {
+    border-radius: 0 0 4px;
+}
+
+tr:last-child td:first-child {
+    border-radius: 0 0 0 4px;
+}
+tr:first-of-type th:first-child {
+    border-radius: 4px 0 0 0;
+}
+tr:first-of-type th:last-child {
+    border-radius: 0 4px 0 0;
+}
+
+td, th { border-bottom: 1px solid #d1d5da;}
+
+table thead th { 
+    background: #f6f8fa;
+    border-top: 1px solid #d1d5da !important;
+}
+
+table thead th form
+{
+    width: auto;
+    padding: 0;
+    margin: 0 10px;
+    display: none;
+    background: none;
+    
+}
+
+table thead th form button:hover
+{
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+td:first-child,
+th:first-child
+{
+    border-left: 1px solid #d1d5da;
+}
+td:last-child,
+th:last-child
+{
+    border-right: 1px solid #d1d5da;
+}
+
+td img
+{
+    max-width: 40px;
+    border-radius: 50%;
+}
+
+
+tbody
+{
+    border-radius: 0 0 5px;
+}
+
+table tr:not(:last-child)
+{
+    border: 1px solid #d1d5da !important;
+    /* border-top: none; */
+}
+
+tr:last-child td:first-child {
+    border-radius: 0 0 0 4px;
+}
+
+
+
+.control {
+    display: inline-block;
+    border: 1px solid #d1d5da;
+    padding: 5px 10px;
+    border-radius: 3px;
+    color: gray !important;
+}
+
+.control:last-of-type {
+    margin-right: 15px;
+}
+
+.control i {
+    color: gray;
+}
+
+.card
+{
+    border: 1px solid #d1d5da;
+    border-radius: 3px;
+}
+
+.card-header {
+    height: 70px;
+    background: #f6f8fa;
+    padding: 10px;
+}
+
+.card-header img
+{
+    height: 100%;
+    width: auto;
+    max-width: 100px; 
+    border-radius: 50%; 
+    float: left;
+    margin-right: 15px;
+}
+
+.card-header strong
+{
+    float: left;
+    position: relative;
+    top: 20px;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    border-top: 1px solid #d1d5da;
+    border-bottom: 1px solid #d1d5da;
+    padding: 20px 10px;
+}
+
+.card-body .btn
+{
+    font-size: .7em;
+    font-weight: 400;
+    border-width: 1px;
+    padding: 5px 15px;
+    position: relative;
+    background-color: #F0005E;
+    color: #fff;
+    border-color: #F0005E;
+    transition: all .5s;
+    margin-top: 15px;
+}
+
+.card-footer
+{
+    padding: 10px;
+}
+
+

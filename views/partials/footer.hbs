@@ -1,0 +1,29 @@
+<footer>
+	<div class="container">
+		<ul>
+			{{#if isAuthenticated}}
+				<li><a href="/home">HOME</a></li>|
+				<li><a href="/profile">MY PROFILE</a></li>|
+				<li><a href="/inbox">INBOX</a></li>|
+				<li><a href="/logout">LOGOUT</a></li>|
+			{{else}}
+				<li><a href="">HOME</a></li>|
+				<li><a href="">ABOUT</a></li>|
+				<li><a href="">TESTIMONIALS</a></li>
+			{{/if}}
+		</ul>
+		<p>Matcha Dating Site &copy 2018 All rights reserved</p>
+	</div>
+</footer>
+<script src="/js/jquery-3.3.1.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/croppie.js"></script>
+{{!-- <script src="/js/all.js"></script> --}}
+
+<script src="/js/main.js"></script>
+{{#each js}}
+	<script src="/js/{{this}}.js"></script>
+{{/each}}
+<script src="/js/exif.js"></script>
+</body>
+</html>

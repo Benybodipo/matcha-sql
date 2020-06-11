@@ -1,0 +1,48 @@
+#interests .box table td:nth-child(odd):hover i,
+#interests .box table td:nth-child(odd):hover label
+{
+	color: #fff !important;
+}
+
+#interests .box table td i,
+#interests .box table td label
+{
+	color: #fff;
+}
+
+#interests .box table td label,
+.interest
+{
+	display: block;
+	text-align: center;
+	font-size: 1.3em;
+	background-color: #F0005E;
+	color: #fff;
+	border-radius: 25px;
+	padding: 5px;
+}
+
+.interest
+{
+	display: inline-block;
+	color: #fff !important;
+	padding-left: 20px;
+	padding-right: 20px;
+	margin: 5px;
+}
+
+.interest svg
+{
+	color: #fff !important;
+}
+
+#profile-img img
+{
+	border-radius: 50% !important;
+}
+
+
+#info #profile-img .star i
+{
+	font-size: 2em;
+}

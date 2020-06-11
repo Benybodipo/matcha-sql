@@ -1,0 +1,191 @@
+
+nav .btn-login,
+nav .btn-register
+{
+	font-weight: bold;
+	color: #F0005E;
+}
+
+/*============================
+	- HERO SECTION
+============================*/
+#hero-section
+{
+	height: calc(100vh - 65px);
+	max-height: 900px;
+	background: url("../img/hero.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	padding: 100px;
+}
+
+form label
+{
+	font-size: 1.2em;
+	margin-right: 25px;
+	float: left;
+	font-weight: bold;
+	color: #F0005E;
+}
+
+form label:nth-child(1)
+{
+	color: #1390c1;
+}
+
+form .input
+{
+	width: 48%;
+}
+
+form .input:nth-child(odd)
+{
+	float: right;
+}
+
+form input[type='radio']
+{
+	margin-right: 10px;
+}
+
+form i
+{
+	display: inline-block;
+	cursor: pointer;
+	font-size: 1.5em;
+}
+
+form .btn
+{
+	float: right;
+	margin-top: 20px;
+}
+
+#dob
+{
+	display: block;
+	width: 100%;
+	margin-top: 15px;
+	margin-bottom: 5px;
+	font-weight: normal;
+	font-size: inherit;
+}
+
+select
+{
+	background: transparent;
+}
+
+.gender
+{
+	display: inline-block;
+	padding: 10px 0;
+	margin-top: 20px;
+}
+.fa-female
+{
+	color:  #F0005E;
+}
+
+.fa-male
+{
+	color:  #00B7FF;
+}
+
+
+/*============================
+	- ABOUT SECTION
+============================*/
+#about-section .container,
+#testimonials-section
+{
+	min-height: 400px;
+	padding: 50px 0;
+}
+#about-section h2,
+#testimonials-section h2
+{
+	font-size: 2em;
+}
+
+#about-section .text
+{
+	width: 100%;
+	max-width: 50%;
+	margin: 50px 0;
+	float: left;
+}
+#about-section .text p
+{
+	font-size: 1.2em;
+	line-height: 1.5;
+}
+
+#about-section img
+{
+	width: 48%;
+	float: right;
+}
+
+/*============================
+	- TESTIMONIALS SECTION
+============================*/
+#testimonials-section
+{
+	background: url("../img/testimonials.jpg"), rgba(0,0,0,.9);
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+#testimonials-section .container
+{
+	padding-top: 60px
+}
+.slider-container
+{
+	display: block;;
+	height: 200px;
+	width: 100%;
+	max-width: 600px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+
+.slider
+{
+	display: block;
+	width: 500%;
+	height: 100%;
+	transition: all 2s;
+	position: relative;
+}
+
+.slider .slide
+{
+	display: block;
+	height: 100%;
+	width: calc(100% / 5);
+	float: left;
+	padding: 25px 15px;
+	background: #ffffff;
+}
+
+.slider .slide img
+{
+	width: 30%;
+	border-radius: 50%;
+	float: left;
+	margin-right: 15px;
+}
+
+.slider .slide h4
+{
+	font-size: 1.5em;
+	margin: 10px
+}
+
+.slider .slide p
+{
+	font-size: 17px
+}

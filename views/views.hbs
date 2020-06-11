@@ -1,0 +1,15 @@
+{{#if isEmpty}}
+	<h3>No visitors</h3>
+{{else}}
+	{{#each visitors}}
+		<div class="user">	
+			<img src="{{images}}" alt="">
+			<br>
+			<strong>{{username}}</strong>
+			<br>
+			<a href="/user/{{_id}}" class="btn" style="display: inline-block; margin: 0 5px">
+				MORE
+			</a>
+		</div>
+	{{/each}}
+{{/if}}

@@ -1,0 +1,20 @@
+
+form
+{
+	max-width: 400px;
+}
+form .input
+{
+	width: 100%;
+}
+
+form a
+{
+	display: inline-block;
+	margin: 15px 0;
+}
+
+form a:hover
+{
+	text-decoration: underline;
+}
