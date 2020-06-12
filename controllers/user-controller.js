@@ -1,3 +1,4 @@
+const connection = require('../config/connection');
 const Users 		= require('../models/users.model');
 const Visits 		= require('../models/visits.model');
 const Likes 		= require('../models/likes.model');
@@ -9,60 +10,33 @@ module.exports = function(req, res)
 	var content = {
 		title: "Matcha | User Profile",
 		css: ["profile","user"],
-		js: ["slider"]
+		js: ["slider"],
+		user: req.user
 	};
-	var id = req.params.id;
+	const {id} = req.params;
+	const genderPrefence = ['Male','Female','Both genders'];
+	let interests = connection.query('SELECT interests.*, user_interests.* FROM interests LEFT JOIN user_interests  ON user_interests.interest_id=interests.id WHERE user_interests.user_id=? AND user_interests.active=?;', [id, 1]);
+	let preferences = connection.query('SELECT * FROM preferences WHERE user_id=?;', [id]);
+	let profile_picture = connection.query('SELECT * FROM images WHERE user_id=? AND is_profile_picture=?;', [id, 1]);
+	let likes = connection.query('SELECT * FROM likes WHERE liker=?;', [id]);
+	let visit = connection.query('SELECT * FROM visits WHERE visitor_id=? AND visited_id=?;', [req.user.id, id]);
 
-	Users.findOne({_id: id}, function(err, user){
-		if (err) throw err;
-		var orStatement = [{userId1: id, userId2: req.user._id}, {userId2: id, userId1: req.user._id, match: 1}];
+	content.profile_picture = profile_picture[0].image;
+	content.preferences = preferences[0]; 
+	content.interests = interests;
+	content.like = (likes.length) ? "fas fa-star": "far fa-star";
+	content.preferences.gender = genderPrefence[preferences[0].gender - 1];
 
-		Likes.findOne({$or: orStatement}, function(err, likes){
-			if (err) throw err;
-			var genderPrefence = ['male','female','both'];
+	// CHECK IF IT WAS THE FIRST TIME YOU VISITING THIS USER
+	if (!visit.length)
+	{
+		let link 	= `${req.protocol}://${req.get('host')}/user/${req.user.id}`;
+		let message = req.user.username + " visited your profile";
 
-			content.user = user;
-			content.interests = getInterests(user.preferences.interests);
-			content.genderPrefence = (user.preferences.gender) ? genderPrefence[user.preferences.gender - 1] : (user.gender == 'male') ? 'female' :'male';
-
-			
-			if (likes && ((likes.userId1.toString() == req.user._id.toString()) || (likes.userId2.toString() == req.user._id.toString())))
-				content.like = "fas fa-star";
-			else
-				content.like = "far fa-star";
-
-			res.render('user', content);
-		});
-
-	});
-
-	Visits.findOne({userId: id, visitorId: req.user._id.toString()}, function(err, visitors){
-		if (err) throw err;
-
-		if (!visitors)
-		{
-			var addNewVisitor = new Visits({userId: id, visitorId: req.user._id.toString()});
-			addNewVisitor.save(function(err){
-				if (err) throw err;
-
-				var link 	= req.protocol +  "://" + req.get('host') + "/user/" + req.user._id.toString();
-				var message = req.user.username + " visited your profile";
-
-				var newNotification = new Notifications({
-					userId: mongoose.Types.ObjectId(id),
-					userId2: req.user._id,
-					type: 1,
-					message: message,
-					link: link
-				});
-
-				newNotification.save(function(err){
-					if (err) throw err;
-					console.log("New Notification");
-				})
-			});
-		}
-	});
+		connection.query('INSERT INTO visits(visitor_id, visited_id) VALUES(?, ?);', [req.user.id, id]);
+		connection.query('INSERT INTO notifications(sender, receiver, message, link, type) VALUES(?, ?, ?, ?, ?);', [req.user.id, id, message, link, 1]);
+	}
+	res.render('user', content);
 }
 
 function getInterests(data)

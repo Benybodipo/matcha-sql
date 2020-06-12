@@ -24,6 +24,7 @@ const connection = new MySql({
 // connection.query(schemas.preferences);
 // connection.query(schemas.interests);
 // connection.query(schemas.user_interests);
+connection.query(schemas.visits);
 
 
 // const interests = [

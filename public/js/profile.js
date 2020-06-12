@@ -215,6 +215,8 @@ $( function() {
 			{
 				if (res.success ==  1)
 					window.location.href = "/";
+				console.log(res);
+				
 			}
 		});
 	});

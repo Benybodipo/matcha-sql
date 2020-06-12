@@ -116,6 +116,16 @@ const user_interests = `CREATE TABLE IF NOT EXISTS user_interests (
     FOREIGN KEY (interest_id) REFERENCES interests(id)
 );`;
   
+const visits = `CREATE TABLE IF NOT EXISTS visits ( 
+	id bigint(20) AUTO_INCREMENT NOT NULL ,
+    visitor_id bigint(20) NOT NULL ,
+    visited_id bigint(20) NOT NULL ,
+    visited_on timestamp NOT NULL DEFAULT NOW(),
+    PRIMARY KEY(id),
+    FOREIGN KEY (visitor_id) REFERENCES users(id),
+    FOREIGN KEY (visited_id) REFERENCES users(id)
+);`;
+  
 
 
 module.exports = {
@@ -129,5 +139,6 @@ module.exports = {
     preferences: preferences,
     images: images,
     interests: interests,
-    user_interests: user_interests
+    user_interests: user_interests,
+    visits: visits
 };

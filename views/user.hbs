@@ -1,14 +1,6 @@
 <div id="info" class="clearfix">
 	<div id="profile-img">
-		{{#unless user.images.length}}
-			{{#if gender}}
-				<img src="/img/male.png" alt=""><br>
-			{{else}}
-				<img src="/img/female.jpeg" alt=""><br>
-			{{/if}}
-		{{else}}
-			<img src="{{user.images}}" alt=""><br>
-		{{/unless}}
+		<img src="{{profile_picture}}" alt=""><br>
 		<div class="star" data-id="{{user._id}}"><i class="{{like}}"></i></div><br>
 	</div>
 	<div id="about">
@@ -23,11 +15,11 @@
 		<table>
 			<tr>
 				<td>Name:</td>
-				<td>{{user.firstname}}</td>
+				<td>{{user.first_name}}</td>
 			</tr>
 			<tr>
 				<td>Surname:</td>
-				<td>{{user.lastname}}</td>
+				<td>{{user.last_name}}</td>
 			</tr>
 			<tr>
 				<td>Age:</td>
@@ -35,7 +27,7 @@
 			</tr>
 			<tr>
 				<td>I am looking for:</td>
-				<td>{{genderPrefence}}</td>
+				<td>{{preferences.gender}}</td>
 			</tr>
 		</table>
 	</div>

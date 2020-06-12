@@ -195,16 +195,15 @@ module.exports.profile = function(req, res) {
 				}
 			}
 		}
-		else if(req.body.action == "delete-account")
+		else if(action == "delete-account")
 		{
-			Users.deleteOne({_id: userid}, function(err, result){
-				if (err) throw err;
-				req.logout();
-				req.session.destroy();
-				res.json({success: 1});
-			});
-
+			// connection.query('DELETE users WHERE id=?;', [req.user.id]);
+			// req.logout;
+			// req.session.destroy();
+			return res.json({action: 'Delete account!'});
 		}
+		console.log(req.body);
+		
 }
 
 async function hashPassword (password) {
