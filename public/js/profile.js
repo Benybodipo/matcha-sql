@@ -82,6 +82,8 @@ $( function() {
 		  data: {action:"update-info", position: res.position, img: res.result},
 		  success: function(res)
 		  {
+			  $("#profile_picture").attr('src', res.result);
+			  $(".cover").fadeOut(300);
 			  console.log(res);
 		  }
 	  });
@@ -132,8 +134,8 @@ $( function() {
 		sendData();
 	});
 
-	$("input[name=sex]").change(sendData);
-	$("input[name=interest]").change(sendData);
+	$("input[name=sex]").change((e) => {sendData()});
+	$("td input[name=interest]").change((e) => {sendData()});
 
 	/*========================
 		- HELPER FUNCTIONS
@@ -155,9 +157,10 @@ $( function() {
 		var preferences = {
 	 	  gender: $("input[name=sex]:checked").val(),
 	 	  distance: $(".distance-km span").text().split("km")[0],
-	 	  visible: false,
+	 	  visible: 1,
 	 	  interests: JSON.stringify(getInterests()),
-	 	  ages: JSON.stringify([$(".min").text(), $(".max").text()]),
+	 	  min_age: $(".min").text(),
+	 	  max_age: $(".max").text(),
 		  action: "update-preferences"
 	   };
 		$.ajax({
@@ -172,7 +175,7 @@ $( function() {
 	}
 
 
-	$("table td input, h2 input, textarea").blur(function(e) {
+	$("table#info-table td input, h2 input, textarea").blur(function(e) {
 
 		var field = $(this).attr("name");
 		var value = $(this).val();

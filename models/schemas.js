@@ -99,6 +99,23 @@ const images = `CREATE TABLE IF NOT EXISTS images (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );`;
 
+const interests = `CREATE TABLE IF NOT EXISTS interests ( 
+	id bigint(20) AUTO_INCREMENT NOT NULL ,
+    name varchar(155) NOT NULL ,
+    class varchar(155) NOT NULL ,
+    PRIMARY KEY(id)
+);`;
+
+const user_interests = `CREATE TABLE IF NOT EXISTS user_interests ( 
+	id bigint(20) AUTO_INCREMENT NOT NULL ,
+    user_id bigint(20) NOT NULL ,
+    interest_id bigint(20) NOT NULL,
+    active int(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (interest_id) REFERENCES interests(id)
+);`;
+  
 
 
 module.exports = {
@@ -111,4 +128,6 @@ module.exports = {
     notifications: notifications,
     preferences: preferences,
     images: images,
+    interests: interests,
+    user_interests: user_interests
 };

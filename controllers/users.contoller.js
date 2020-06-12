@@ -100,111 +100,98 @@ function updateInfo(res, obj, userid)
 ============================*/
 module.exports.profile = function(req, res) {
 		var userid = req.user._id;
+		const {action} = req.body;
 
-		if (req.body.action == "update-preferences")
+		if (action === "update-preferences")
 		{
-			var prefObj = {
-				gender: req.body.gender,
-				distance: req.body.distance,
-				visible: req.body.visible,
-				interests: JSON.parse(req.body.interests),
-				ages: JSON.parse(req.body.ages)
-			};
+			const interests = JSON.parse(req.body.interests);
+			let query = null;
+			delete req.body.interests; delete req.body.action;
 
-			var preferences = new Preferences(prefObj);
+			const preferences = Object.keys(req.body);
 
-			Users.findOne({_id: userid}, function(err, user){
-					if (!user)
-						prefObj._id = userid;
+			// UPDATE PREFERENCES
+			let stm = "UPDATE preferences SET ";
+			let params = [];
 
-					Users.updateOne({_id: userid}, {preferences: prefObj}, {upsert: true, safe: false}, function(err, x, z){
-						if (err)
-							console.log(err);
-						else
-							console.log("success");
-					});
-
-			});
-		}
-		else if(req.body.action == "update-info")
-		{
-			var pos = req.body.position,
-				 img = req.body.img,
-				 field = req.body.field,
-				 value = req.body.value;
-
-			if (img)
+			for (let index = 0; index < preferences.length; index++) 
 			{
-				var imageObj = JSON.parse('{"images.'+pos+'": "'+img+'"}');
-				Users.updateOne({_id: userid}, {$set: imageObj}, function(err, result){
-					if (err) throw err;
-					res.json(result);
+					var coma = (index + 1 < preferences.length) ? ', ' : ' WHERE user_id=?;';
+					stm += `${preferences[index]}=?${coma} `;
+					params.push(req.body[preferences[index]])
+			}
+			params.push(req.user.id);
+			connection.query(stm, params);
+
+			// UPDATE INTERESTS
+			if (interests.length)
+			{
+				query = connection.query('UPDATE user_interests SET active=? WHERE user_id=?;', [0, req.user.id]);
+				
+				interests.forEach((id) => {
+					query = connection.query('SELECT * FROM user_interests WHERE user_id=? AND interest_id=?;', [req.user.id, id]);
+					
+					if (query.length)
+						quey = connection.query('UPDATE user_interests SET active=? WHERE user_id=? AND interest_id=?;', [1, req.user.id, id]);
+					else
+						query = connection.query('INSERT INTO user_interests(user_id, interest_id, active) VALUES(?, ?, ?);', [req.user.id, id, 1]);
 				});
+			}
+			
+			return res.json(query);
+		}
+		else if(action === "update-info")
+		{	
+			let {field, value} = req.body; 
+
+			if (req.body.img)
+			{ 
+				connection.query('UPDATE images SET image=? WHERE user_id=? AND is_profile_picture=?;', [req.body.img, req.user.id, 1]);
+				return res.json(req.body);
 			}
 			else
 			{
-				var infoObj = JSON.parse('{"'+field+'": "'+value+'"}');
-				var errors = [];
+				let query = null;
+				let errors = [];
 
-				if (field == "username")
-				{
-					req.check("value", "Username too short").notEmpty().isLength({ min: 3 });
-					errors = req.validationErrors();
-
-					if (errors)
-						res.json(errors[0].msg);
-					else
-					{
-						Users.find(infoObj, function(err, result){
-							if (err) throw err;
-							if (result.length >= 1)
-								res.json("Username already in use");
-							else
-								updateInfo(res, infoObj, userid);
-						});
-					}
-				}
-				else if (field == "email")
-				{
-					req.check("value", "Invalid e-mail").isEmail().normalizeEmail();
-					errors = req.validationErrors();
-
-					if (errors)
-						res.json(errors[0].msg);
-					else
-					{
-						Users.find(infoObj, function(err, result){
-							if (err) throw err;
-							if (result.length >= 1)
-								res.json("Email already in use");
-							else
-								updateInfo(res, infoObj, userid);
-						});
-					}
-				}
-				else if (field == "confirm-password")
+				if (field == 'confirm-password')
 				{
 					req.check("value", "Unsecure Password").isLength({ min: 6});
 					errors = req.validationErrors();
 
 					if (errors)
-						res.json(errors[0].msg);
-					else
-					{
-						bcrypt.genSalt(10, function(err, salt){
-							if (err) throw err;
-							bcrypt.hash(value, salt, function(err, hash)
-							{
-								var infoObj = JSON.parse('{"password": "'+hash+'"}');
-								updateInfo(res, infoObj, userid);
-							});
-						});
-					}
+						return res.json(errors[0].msg);
+					
+					hashPassword(value).then((password) => { 
+						query = connection.query(`UPDATE users SET password=?;`, [password]);
+						return res.json(query);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
 				}
 				else
 				{
-
-					updateInfo(res, infoObj, userid);
+					if (field == 'usernname')
+						req.check("value", "Username too short").notEmpty().isLength({ min: 3 });
+					else if (field == 'email')
+						req.check("value", "Invalid e-mail").isEmail().normalizeEmail();
+					errors = req.validationErrors();
+	
+					if (errors)
+						res.json(errors[0].msg);
+					else
+					{
+						query = connection.query(`SELECT username FROM users WHERE ${field}=?;`, [value]);
+	
+						if (query.length)
+							res.json(`${field} already in use`);
+						else
+						{
+							query = connection.query(`UPDATE users SET ${field}=?;`, [value]);
+							return res.json(query);
+						}
+					}
 				}
 			}
 		}
@@ -216,6 +203,7 @@ module.exports.profile = function(req, res) {
 				req.session.destroy();
 				res.json({success: 1});
 			});
+
 		}
 }
 
