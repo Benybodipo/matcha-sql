@@ -32,7 +32,7 @@ module.exports = function(req, res)
 	if (parseInt(req.params.gender) <= gender.length )
 		query.gender = {$eq: gender[req.params.gender - 1]};
 	
-	const users = connection.query("SELECT * FROM users INNER JOIN images ON users.id=images.user_id WHERE images.is_profile_picture=?;", [1]);
+	const users = connection.query("SELECT * FROM users INNER JOIN images ON users.id=images.user_id WHERE users.id!=? AND images.is_profile_picture=?;", [req.user.id, 1]);
 	
 	content.users = users;
 	return res.render("home", content);

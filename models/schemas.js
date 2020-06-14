@@ -20,7 +20,6 @@ const chats = `CREATE TABLE IF NOT EXISTS chats (
 	id bigint(20) AUTO_INCREMENT NOT NULL , 
 	sender bigint(20) NOT NULL, 
 	receiver bigint(20) NOT NULL, 
-    username VARCHAR(255) NOT NULL,
     timestamp timestamp DEFAULT NOW(),
     PRIMARY KEY(id),
     FOREIGN KEY (sender) REFERENCES users(id),
@@ -53,11 +52,13 @@ const messages = `CREATE TABLE IF NOT EXISTS messages (
 	id bigint(20) AUTO_INCREMENT NOT NULL , 
 	sender bigint(20) NOT NULL, 
 	receiver bigint(20) NOT NULL, 
+	chat_id bigint(20) NOT NULL, 
     message text NOT NULL,
     _read int(1) NOT NULL DEFAULT 0,
     sent_at timestamp DEFAULT NOW(),
     read_at timestamp NULL,
     PRIMARY KEY(id),
+    FOREIGN KEY (chat_id) REFERENCES chats(id),
     FOREIGN KEY (sender) REFERENCES users(id),
     FOREIGN KEY (receiver) REFERENCES users(id)
 );`;

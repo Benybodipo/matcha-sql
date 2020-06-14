@@ -44,6 +44,8 @@ $(function(){
 			dataType: "json",
 			success: function(data)
 			{
+				console.log(data);
+				
 				if (data.return)
 					$(".star i").removeClass("far fa-star").addClass("fas fa-star");
 				else

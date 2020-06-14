@@ -1,13 +1,13 @@
 <div id="contacts-list">
 	<input type="text" placeholder="Search" id="search">
 	{{#each chats}}
-		<div class="contact clearfix" data-userid="{{contact}}" data-chatid="{{chatId}}">
+		<div class="contact clearfix" data-userid="{{user_id}}" data-chatid="{{id}}">
 			<img src="{{image}}" alt="">
 			<span class="name">
 				<b>{{username}}</b>
 			</span>
 			<p style="color: gray;">{{message}}</p>
-			<small></small>
+			<small>{{sent_at}}</small>
 		</div>
 	{{/each}}
 </div>

@@ -37,8 +37,11 @@ module.exports.register = function(req, res) {
 	}
 	else
 	{
+		let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		months = months.indexOf(req.body.month) + 1;
+		months = (months < 10) ? `0${months}`: months;
 		const {firstname, lastname, username, email, password, gender} = req.body;
-		const birthdate = `${req.body.month} ${req.body.day} ,${req.body.year}`;
+		const birthdate = `${req.body.year}-${months}-${req.body.day}`;
 		
 
 		let user = connection.query('SELECT * FROM users WHERE username=? OR email=?', [username, email]);
@@ -47,7 +50,7 @@ module.exports.register = function(req, res) {
 			hashPassword(password).then((password) => {
 				let sql = "INSERT INTO users(first_name, last_name, username, email, password, gender, birthday) VALUES(?, ?, ?, ?, ?, ?, ?);";
 
-				user = connection.query(sql, [firstname, lastname, username, req.body.email, password, gender, '2000-05-05']);
+				user = connection.query(sql, [firstname, lastname, username, req.body.email, password, gender, birthdate]);
 				if (user)
 				{
 					const id = user.insertId;
@@ -62,7 +65,7 @@ module.exports.register = function(req, res) {
 						var email = {
 							to: "benybodipo@gmail.com",
 							sbj: "ACCOUNT ACTIVATION",
-							msj: `Follow the link <a href='http://localhost:7500/login/${username}/${id}/${token}/1'>CLICK</a>`
+							msj: `Follow the link <a href='http://localhost:7500/login/${username}/${id}/${token.toSring()}/1'>CLICK</a>`
 						};
 
 						transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info)
@@ -85,14 +88,6 @@ module.exports.register = function(req, res) {
 			return res.json(errors);
 		}
 	}
-}
-
-function updateInfo(res, obj, userid)
-{
-	Users.updateOne({_id: userid}, {$set: obj}, function(err, result){
-		if (err) throw err;
-		res.json(result);
-	});
 }
 
 /*============================

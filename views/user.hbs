@@ -1,29 +1,29 @@
 <div id="info" class="clearfix">
 	<div id="profile-img">
 		<img src="{{profile_picture}}" alt=""><br>
-		<div class="star" data-id="{{user._id}}"><i class="{{like}}"></i></div><br>
+		<div class="star" data-id="{{_user.id}}"><i class="{{like}}"></i></div><br>
 	</div>
 	<div id="about">
-		<h2>{{user.username}}</h2>
+		<h2>{{_user.username}}</h2>
 		<strong>3km away</strong><br>
-		<strong>{{user.location.city}}, {{user.location.country}}</strong>
+		<strong>{{_user.location.city}}, {{_user.location.country}}</strong>
 
 		<h2>Biography</h2>
-		<p>{{user.bio}}</p>
+		<p>{{_user.bio}}</p>
 
 		<h2>Info: </h2>
 		<table>
 			<tr>
 				<td>Name:</td>
-				<td>{{user.first_name}}</td>
+				<td>{{_user.first_name}}</td>
 			</tr>
 			<tr>
 				<td>Surname:</td>
-				<td>{{user.last_name}}</td>
+				<td>{{_user.last_name}}</td>
 			</tr>
 			<tr>
 				<td>Age:</td>
-				<td>{{user.age}} years old</td>
+				<td>{{_user.age}} years old</td>
 			</tr>
 			<tr>
 				<td>I am looking for:</td>

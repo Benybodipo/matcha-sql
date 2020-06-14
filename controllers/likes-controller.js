@@ -3,6 +3,7 @@ const Chats 	= require('../models/chats.model');
 const mongoose 	= require('mongoose');
 const Notifications = require('../models/notifications.model');
 const Messages	= require('../models/messages.model');
+const connection  = require('../config/connection');
 
 module.exports.getLikes = function(req, res){
 
@@ -14,80 +15,43 @@ module.exports.getLikes = function(req, res){
 
 module.exports.like = function(req, res){
 
-	var id 			= req.body.userId;
-	var orStatement = [{userId1: id, userId2: req.user._id}, {userId2: id, userId1: req.user._id}];
+	const id = req.body.userId;
+	let like = connection.query('SELECT * FROM likes WHERE (liker=? AND liked=?) OR (liker=? AND liked=?)', [req.user.id, id, id, req.user.id]);
+	
+	if (like.length) 
+	{
+		like = like[0];
+		if (like.liked == req.user.id && like.matched == 0){
+			var link = `${req.protocol}://${req.get('host')}/inbox`;
+			var message = `Hi there, this is the begining an awesome frienship with ${req.user.username}, you can now chat!`;
+			var chat = connection.query('INSERT INTO chats(sender, receiver) VALUES(?, ?);', [req.user.id, id]);
 
-	Likes.findOne({$or: orStatement}, function(err, likes){
-		if (err) throw err;
+			connection.query('INSERT INTO messages(sender, receiver, chat_id, message) VALUES(?, ?, ?, ?);', [req.user.id, id, chat.insertId, message]);
+			connection.query('UPDATE likes SET matched=? WHERE liked=? AND liker=?', [1, req.user.id, id]);
+			newNotification(req.user.id, id, 3, message, link.toString());
 
-		if (likes)
-		{
-			// I was liked
-			if ((likes.userId1.toString() == req.user._id.toString()) && likes.match ==  0)
-			{
-				if (likes.match ==  0)
-				{
-					Likes.updateOne({userId1: req.user._id, userId2: id}, {$set: {match: 1}}, function(err, success){
-						if (err) throw err;
-
-						var message = req.user.username + " is a new Match";
-						var link = req.protocol +  "://" + req.get('host') + "/inbox";
-						newNotification(id, req.user._id, 3, message, "/inbox");
-
-						var newChat  = new Chats({
-							sender: req.user._id,
-							receiver: mongoose.Types.ObjectId(id)
-						});
-
-						newChat.save(function(err){
-							if (err) throw err;
-							
-							let newMessage = new Messages({
-								message: "Hi there, this is the begining an awesome frienship!!",
-								sender: req.user._id,
-								receiver: mongoose.Types.ObjectId(id),
-								chatId: newChat._id
-							});
-
-							newMessage.save(function(err){
-								if (err) throw err;
-								res.send({return: 1});
-							});
-						});
-						
-					});
-				}
-			}
+			return res.send({return: 1});
 		}
 		else
 		{
-			var like = new Likes({userId1: id, userId2: req.user._id});
-
-			like.save(function(err){
-				if (err) throw err;
-
-				var message = req.user.username + " liked your profile";
-				var link 	= req.protocol +  "://" + req.get('host') + "/user/" + req.user._id.toString();
-				newNotification(id, req.user._id, 2, message, link);
-				res.send({return: 1});
-			});
+			
 		}
-	});
+	}
+	else
+	{
+		
+		like = connection.query('INSERT INTO likes(liker, liked) VALUES(?, ?);', [req.user.id, id]);
+		let message = `${req.user.username} liked your profile!`;
+		let link = `${req.protocol}://${req.get('host')}/user/${req.user.id}`;
+		let notification = newNotification(req.user.id, id, 2, message, link);
+
+		return res.send({return: 1});
+	}
+	return res.json(like);
 
 }
 
-function newNotification(destination, origin, type,  message, link)
+function newNotification(sender, receiver, type,  message, link)
 {
-	var newNotification = new Notifications({
-		destination: mongoose.Types.ObjectId(destination),
-		origin: origin,
-		type: type,
-		message: message,
-		link: link
-	});
-
-	newNotification.save(function(err){
-		if (err) throw err;
-		console.log("New Notification");
-	})
+	connection.query('INSERT INTO notifications(sender, receiver, message, link, type) VALUES(?, ?, ?, ?, ?);', [sender, receiver, message, link, type]);
 }
