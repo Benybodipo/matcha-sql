@@ -1,9 +1,3 @@
-const Messages	= require('../models/messages.model');
-const Chats		= require('../models/chats.model');
-const Users 	= require('../models/users.model');
-const Likes 	= require('../models/likes.model');
-const Visits 	= require('../models/visits.model');
-const mongoose 	= require('mongoose');
 const connection = require('../config/connection');
 
 module.exports.page = function(req, res)

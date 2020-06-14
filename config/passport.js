@@ -5,6 +5,7 @@ const LocalStrategy 	= require('passport-local').Strategy;
 const bcrypt 			= require('bcryptjs');
 const isOnline = require('is-online');
 const connection 	 = require('../config/connection'); 
+const iplocate = require("node-iplocate");
 // Geolocation
 const geoip = require('geoip-lite');
 const http = require('http'); 
@@ -29,10 +30,13 @@ module.exports = function() {
 					if(online){
 						http.get({'host': 'api.ipify.org', 'port': 80, 'path': '/'}, function(resp) {
 							resp.on('data', function(ip) {
-								let location = JSON.stringify(geoip.lookup(String(ip)));
+								iplocate(ip.toString()).then(function(results) {
+									
+									let location = JSON.stringify(results, null, 2);
+									connection.query("UPDATE users SET location=? WHERE id=?", [location, user.id]);
+									return done(null, user);
+								});
 
-								connection.query("UPDATE users SET location=? WHERE id=?", [location, user.id]);
-								return done(null, user);
 							});
 						});
 					}
@@ -40,7 +44,7 @@ module.exports = function() {
 						return done(null, user);
 				});
 				
-				return done(null, user);
+				// return done(null, user);
 			}
 			else
 				return done(null, false, { message: 'Wrong password!'});

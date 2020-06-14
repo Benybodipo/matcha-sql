@@ -14,7 +14,7 @@
                 <a href="{{notification.link}}" class="btn">Check it out</a>
             </div>
             <div class="card-footer clearfix">
-                <small style="float: right;">{{notification.date}}</small>
+                <small style="float: right;">{{notification.sent_at}}</small>
             </div>
         </div>
     {{else}}
@@ -39,20 +39,20 @@
                 <tbody>
                     {{#each notifications}}
                         <tr>
-                            <td><input type="checkbox" name="notification" class="" value="{{_id}}"></td>
+                            <td><input type="checkbox" name="notification" class="" value="{{id}}"></td>
                             <td><img src="{{image}}" alt=""></td>
                             <td>
-                                <a href="/notifications/{{_id}}">
-                                    {{#if status}}
+                                <a href="/notifications/{{id}}">
+                                    {{#if _read}}
                                         {{message}}
                                     {{else}}
                                         <strong>{{message}}</strong>
                                     {{/if}}
                                 </a> 
                             </td>
-                            <td><small>{{date}}</small></td>
+                            <td><small>{{sent_at}}</small></td>
                             <td>
-                                <a href="/notifications/{{_id}}/delete"><i class="far fa-trash-alt"></i></a>
+                                <a href="/notifications/{{id}}/delete"><i class="far fa-trash-alt"></i></a>
                             </td>
                         </tr>
                     {{/each}}

@@ -1,116 +1,80 @@
 const Users 	  = require('../models/users.model');
 const Notifications 	  = require('../models/notifications.model');
 const mongoose 	= require('mongoose');
+const connection = require('../config/connection');
 
 module.exports.index = function(req, res)
 {
-    Notifications.find({destination: req.user._id}, function (err, notifications) {
-        var content = {
-            title: "Matcha | Notifications",
-            css: ["notifications"],
-            // js: ["notifications"]
-        };
+    var content = {
+        title: "Matcha | Notifications",
+        css: ["notifications"]
+    };
+    const notifications = connection.query(`SELECT  notifications.id, notifications._read, DATE_FORMAT(sent_at, "%b %d %Y") AS sent_at, SUBSTRING(notifications.message, 1, 50) AS message, notifications.link, users.username, images.image
+    FROM notifications 
+    LEFT JOIN users ON notifications.receiver=users.id 
+    LEFT JOIN images ON notifications.receiver=images.user_id 
+    WHERE receiver=?;`, [req.user.id]);
 
-        let ids = notifications.map(function(notification){
-            return (notification.origin)
-        });
-
-        Users.find({_id: {$in: ids}}, function (err, users){
-
-            let data = notifications.map(function (notification){
-                let user = users.find(function (user){
-                    return (user.id == notification.origin);
-                });
-
-                let index = users.indexOf(user);
-                if (index >= 0)
-                {
-                    let tmp = JSON.parse(JSON.stringify(notification));
-                    tmp.username = users[index].username;
-                    tmp.image = users[index].images[0];
-                    tmp.date = (new Date(tmp.timestamp)).toDateString();
-                    
-                    return tmp;
-                }
-            });
-            content.notifications = data;
-            content.count = data.length;
-
-            res.render('notifications', content);
-        }); 
-    });
+    content.notifications = notifications;
+    content.count = notifications.length;
+    
+    return res.render('notifications', content);
 }
 
 module.exports.single = function(req, res)
 {
-    Notifications.findOne({_id: mongoose.Types.ObjectId(req.params.id) }, function (err, notification) {
-        if (err) throw err;
+    var content = {
+        title: "Matcha | Notifications",
+        css: ["notifications"],
+        js: ["notifications"],
+        isSingle: true
+    };
 
-        if (notification)
-        {
-            Users.findOne({_id: notification.origin}, function (err, user){
-                if (err) throw err;
+    const notification = connection.query(`SELECT  notifications.*, DATE_FORMAT(sent_at, "%b %d %Y") AS sent_at, users.username, images.image
+    FROM notifications 
+    LEFT JOIN users ON notifications.receiver=users.id 
+    LEFT JOIN images ON notifications.receiver=images.user_id 
+    WHERE notifications.id=? AND notifications.receiver=?;`, [req.params.id, req.user.id]);
+    
+    if (notification.length)
+    {
+        if (!notification[0]._read)
+            connection.query('UPDATE notifications SET _read=? WHERE id=?', [1, req.params.id]);
+        content.notification = notification[0];
 
-                if (user)
-                {
-                    let tmp = JSON.parse(JSON.stringify(notification));
-                    tmp.username = user.username;
-                    tmp.image = user.images[0];
-                    tmp.date = (new Date(tmp.timestamp)).toDateString();
-
-                    Notifications.updateOne({_id: req.params.id}, {$set: {status: 1}}, function (err, result){
-                        var content = {
-                            title: "Matcha | Notifications",
-                            css: ["notifications"],
-                            js: ["notifications"],
-                            notification: tmp,
-                            isSingle: true
-                        };
-
-                        res.render('notifications', content);
-                    });
-                }
-                else
-                    return res.redirect('/notifications');
-            });
-        }
-        else
-            return res.redirect('/notifications');
-    });
+        return res.render('notifications', content);
+    }
+    return res.redirect('/notifications');
 }
 
 module.exports.markAllAsRead = function(req, res)
 {
     let ids = JSON.parse(req.body.ids);
 
-    Notifications.updateMany({_id: {$in: ids}}, {status: 1}, function (err, success) {
-        if (err) throw err;
-        return res.redirect('/notifications')
-    });
+    for (let index = 0; index < ids.length; index++) {
+        connection.query('UPDATE notifications SET _read=? WHERE id=?;', [1, ids[index]])
+    }
+    return res.redirect('/notifications')
 }
 
 module.exports.delete = function(req, res)
 {
-    Notifications.remove({_id: req.params.id}, function (err, success) {
-        if (err) throw err;
-        return res.redirect('/notifications')
-    });
+    connection.query('DELETE FROM notifications WHERE id=?;', [req.params.id]);
+    return res.redirect('/notifications');
 }
 
 module.exports.deleteAll = function(req, res)
 {
     let ids = JSON.parse(req.body.ids);
 
-    Notifications.remove({_id: {$in: ids}}, function (err, success) {
-        if (err) throw err;
-        return res.redirect('/notifications')
-    });
+    for (let index = 0; index < ids.length; index++) {
+        connection.query('DELETE FROM notifications WHERE id=?;', [ids[index]])
+    }
+    return res.redirect('/notifications')
 }
 
 module.exports.getAll = function (req, res)
 {
-    Notifications.find({destination: req.user._id, status: 0}, function(err, notifications){
-		if (err) throw err;
-		return res.json(notifications); 
-	});
+    const notifications = connection.query('SELECT * FROM notifications WHERE receiver=? AND _read=?;', [req.user.id, 0]);
+    return res.json(notifications);
 }

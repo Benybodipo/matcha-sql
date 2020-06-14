@@ -1,13 +1,7 @@
 $(function(){
 
-	// getNotifications();
-
-	// $(".bell").click(function(e){
-	// 	e.preventDefault();
-	// 	$(".bell  ul").toggleClass("visible");
-	// });
-
-	// setInterval(getNotifications, 1000);
+	getNotifications();
+	setInterval(getNotifications, 1000);
 
 	var notifications = {count: 0};
 

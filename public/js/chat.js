@@ -119,8 +119,6 @@ $(function(){
 		var message = $(this).val().trim();
 		var receiver = $(this).attr("data-userid");
 		var chat_id = $(this).attr("data-chatid");
-		console.log(chat_id);
-		
 		
 		if (e.keyCode == 13)
 		{
@@ -130,8 +128,6 @@ $(function(){
 				data: {message: message, receiver: receiver, chat_id: chat_id},
 				success: function(res)
 				{
-					console.log(res);
-					
 					$("#message").val("");
 				},
 				error: function(err){
