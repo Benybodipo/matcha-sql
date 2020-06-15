@@ -25,8 +25,8 @@ module.exports = function(req, res)
 				return (obj.active == 1 && obj.interest_id == interest.id);
 			});
 			
-			if (active) interests[i].active = 'checked'
-			
+			if (active) 
+				interests[i].active = 'checked'
 		});
 
 		let int = [];
@@ -38,6 +38,7 @@ module.exports = function(req, res)
 		}
 		
 		content.preferences = preferences[0];
+		content.preferences.visible = (content.preferences.visible) ? 'checked' : "";
 		content.interests = int;
 		content.images =  images;
  

@@ -134,8 +134,7 @@ $( function() {
 		sendData();
 	});
 
-	$("input[name=sex]").change((e) => {sendData()});
-	$("td input[name=interest]").change((e) => {sendData()});
+	$("input[name=sex], input[name=visible], td input[name=interest]").change((e) => {sendData()});
 
 	/*========================
 		- HELPER FUNCTIONS
@@ -157,12 +156,13 @@ $( function() {
 		var preferences = {
 	 	  gender: $("input[name=sex]:checked").val(),
 	 	  distance: $(".distance-km span").text().split("km")[0],
-	 	  visible: 1,
 	 	  interests: JSON.stringify(getInterests()),
 	 	  min_age: $(".min").text(),
 	 	  max_age: $(".max").text(),
-		  action: "update-preferences"
+		  action: "update-preferences",
+		  visible: $("input[name=visible]").is(':checked') ? 1 : 0
 	   };
+	   
 		$.ajax({
  		  url: "/profile",
  		  method: 'POST',

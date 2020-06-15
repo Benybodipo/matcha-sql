@@ -79,8 +79,6 @@ module.exports.fans = function (req, res){
 
 	content.fans = fans;
 	content.isEmpty = (!fans.length) ? true : false;
-
-	console.log(fans);
 	
 	return res.render('fans', fans);
 }
