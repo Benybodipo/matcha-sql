@@ -71,11 +71,11 @@ var users = require('./controllers/users.contoller.js');
 ======================*/
 app.get("/", indexController);
 app.get("/login", loginController);
+app.get("/login/:username", loginController);
 app.get("/login/:username/:id/:token/:type", loginController);
 
 app.get("/forgot-password", users.forgotPassword);
-// app.get("/reset-password/:id/:token/:type", users.resetPassword);
-app.get("/reset-password/", users.resetPassword);
+app.get("/reset-password/:user_id/:token/:type", users.resetPassword);
 
 app.get("/home", authenticationMiddleware(), homeController);
 app.get("/user/:id", authenticationMiddleware(), userController);

@@ -211,8 +211,6 @@ module.exports.forgotPassword = (req, res) => {
 		errors: null,
 	};
 
-
-	return res.json(req.url);
 	if (req.method == 'GET')
 		return res.render('forgot-password', content);
 	else if (req.method == 'POST' )
@@ -227,14 +225,10 @@ module.exports.forgotPassword = (req, res) => {
 		}
 		else
 		{
-
-			// 1. Create a reset-password link
-			// 2. Send email with link 
 			// 3. Render login page with flash message
 			let sql = 'SELECT id FROM users WHERE email=?;';
 			let select = connection.query(sql, [req.body.email]);
 			
-			return res.json('Still working on it');
 			if (select.length)
 			{
 				let {id} = select[0];
@@ -247,13 +241,13 @@ module.exports.forgotPassword = (req, res) => {
 					var email = {
 						to: "benybodipo@gmail.com",
 						sbj: "RESET PASSWORD",
-						msj: `<a href='${req.protocol}://${req.get('host')}/reset-password/${id}/${token.toSring()}/2'>Click here</a> to reset your password`
+						msj: `<a href='${req.protocol}://${req.get('host')}/reset-password/${id}/${token.generate()}/2'>Click here</a> to reset your password`
 					};
 
 					transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info)
 					{
 						if (err) throw err;
-						res.redirect('/login');
+						res.redirect('/login'); //With flash please check your email inbox
 					});
 				}
 
@@ -282,8 +276,9 @@ module.exports.resetPassword = (req, res) => {
 			let link = connection.query('SELECT id FROM links WHERE user_id=? AND token=? AND type=?', [user_id, token, type]);
 
 			if (link.length){
-				// Get the link and ad to the form hidden input
 				content.url = req.url;
+				content.link_id = link[0].id;
+				content.user_id = user_id;
 				return res.render('reset-password', content);
 			}
 			else
@@ -292,26 +287,38 @@ module.exports.resetPassword = (req, res) => {
 		else
 			return res.json('We have to redirect back with flash message!')
 	}
-	else if (req.method == 'POST' && req.body.password && req.body.confirm_password)
+	else if (req.method == 'POST')
 	{
-		req.check("password").isLength({ min: 6 });
-		req.check("confirm-password", "Password don't match").equals(req.body.password);
-
-		let errors = req.validationErrors();
-
-		if (errors)
+		if ( req.body.password && req.body.confirm_password)
 		{
-			content.errors = errors;
-			return res.redirect(req.body.url);
+			req.check("password").isLength({ min: 6 });
+			req.check("confirm_password", "Password don't match").equals(req.body.password);
+
+			let errors = req.validationErrors();
+			
+			if (errors)
+			{
+				content.errors = errors;
+				return res.redirect(req.body.url);
+			}
+			else
+			{
+				hashPassword(req.body.password).then((password) => {
+					let sql = `UPDATE users SET password=? WHERE id=?; SELECT username FROM users WHERE id=?;`
+					let query = connection.query(sql, [password, req.body.user_id, req.body.user_id]);
+
+					if (query[0].affectedRows)
+					{
+						connection.query('DELETE FROM links WHERE id=?;', [req.body.link_id]);
+						return res.redirect(`/login/${query[1][0].username}`) // With flash message (Password successfully reseted, please enter password for login);
+					}
+				}).catch((err) => {
+					return console.log(err);
+				});
+			}
 		}
 		else
-		{
-			// 1. Update password
-			// 2. Send email with new password and credentials 
-			// 3. remove link
-			// 3. Render login page with flash message and username on field
-
-		}
+			return res.redirect(req.body.url) //With flash message (You cnat submit empty inputs)
 	}
 	
 	
