@@ -201,6 +201,122 @@ module.exports.profile = function(req, res) {
 		
 }
 
+/*============================
+		- UPDATE PROFILE
+============================*/
+module.exports.forgotPassword = (req, res) => {
+	var content = {
+		title: "Matcha | Forgot Password",
+		css: ["home"],
+		errors: null,
+	};
+
+
+	return res.json(req.url);
+	if (req.method == 'GET')
+		return res.render('forgot-password', content);
+	else if (req.method == 'POST' )
+	{
+		req.check("email", "Invalid e-mail").isEmail().normalizeEmail();
+		var errors = req.validationErrors();
+		
+		if (errors)
+		{
+			content.errors = errors;
+			res.render("forgot-password", content);
+		}
+		else
+		{
+
+			// 1. Create a reset-password link
+			// 2. Send email with link 
+			// 3. Render login page with flash message
+			let sql = 'SELECT id FROM users WHERE email=?;';
+			let select = connection.query(sql, [req.body.email]);
+			
+			return res.json('Still working on it');
+			if (select.length)
+			{
+				let {id} = select[0];
+				let token = new TokenGenerator(256, TokenGenerator.BASE62);
+				let insert = connection.query('INSERT INTO links(user_id, token, type) VALUES(?, ?, ?);', [id, token.generate(), 2]);
+	
+				if (insert.insertId)
+				{
+					var transporter = nodemailer.createTransport(mail.credentials);
+					var email = {
+						to: "benybodipo@gmail.com",
+						sbj: "RESET PASSWORD",
+						msj: `<a href='${req.protocol}://${req.get('host')}/reset-password/${id}/${token.toSring()}/2'>Click here</a> to reset your password`
+					};
+
+					transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info)
+					{
+						if (err) throw err;
+						res.redirect('/login');
+					});
+				}
+
+				res.json(req.body);
+			}
+			else
+				return res.json('No such email address found!');
+		}
+	}
+		
+}
+
+module.exports.resetPassword = (req, res) => {
+
+	var content = {
+		title: "Matcha | Reset Password",
+		css: ["home"],
+		errors: null,
+		success: null
+	};
+	let {user_id, token, type} = req.params;
+
+	if (req.method == 'GET'){
+		if (user_id && token && type)
+		{
+			let link = connection.query('SELECT id FROM links WHERE user_id=? AND token=? AND type=?', [user_id, token, type]);
+
+			if (link.length){
+				// Get the link and ad to the form hidden input
+				content.url = req.url;
+				return res.render('reset-password', content);
+			}
+			else
+				return res.json('We have to redirect back with flash message!')
+		}
+		else
+			return res.json('We have to redirect back with flash message!')
+	}
+	else if (req.method == 'POST' && req.body.password && req.body.confirm_password)
+	{
+		req.check("password").isLength({ min: 6 });
+		req.check("confirm-password", "Password don't match").equals(req.body.password);
+
+		let errors = req.validationErrors();
+
+		if (errors)
+		{
+			content.errors = errors;
+			return res.redirect(req.body.url);
+		}
+		else
+		{
+			// 1. Update password
+			// 2. Send email with new password and credentials 
+			// 3. remove link
+			// 3. Render login page with flash message and username on field
+
+		}
+	}
+	
+	
+}
+
 async function hashPassword (password) {
 	const saltRounds = 10;
   

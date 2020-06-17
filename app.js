@@ -72,6 +72,11 @@ var users = require('./controllers/users.contoller.js');
 app.get("/", indexController);
 app.get("/login", loginController);
 app.get("/login/:username/:id/:token/:type", loginController);
+
+app.get("/forgot-password", users.forgotPassword);
+// app.get("/reset-password/:id/:token/:type", users.resetPassword);
+app.get("/reset-password/", users.resetPassword);
+
 app.get("/home", authenticationMiddleware(), homeController);
 app.get("/user/:id", authenticationMiddleware(), userController);
 app.get("/home/:age_min/:age_max/:distance/:gender/:interests", authenticationMiddleware(), homeController);
@@ -106,6 +111,10 @@ app.post("/login", passport.authenticate('local', {
 	successRedirect: '/home',
 	failureRedirect: '/login'
 }));
+app.post("/forgot-password", users.forgotPassword);
+app.post("/reset-password", users.resetPassword);
+
+
 app.post("/inbox", inboxController.chat)
 app.post('/profile', users.profile);
 app.post("/likes", likeController.like);

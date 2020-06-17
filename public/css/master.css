@@ -110,8 +110,9 @@ table.bordered td
     border: 2px solid ;
     text-transform: uppercase;
     font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
+    font-weight: normal;
+	cursor: pointer;
+	border-radius: 3px;
 }
 
 .btn.shallow
@@ -139,12 +140,15 @@ form
 	max-width: 500px;
 	padding: 50px 25px;
 	background: rgba(255,255,255, .9);
+	box-shadow: 0 1px 3px rgba(0,0,0, .2);
+	border-radius: 3px;
 }
 
 form h2
 {
 	text-align: center;
-	font-size: 2.2em;
+	font-size: 2em;
+	font-weight: normal;
 	margin-bottom: 50px;
 	color: #F0005E;
 }
@@ -167,6 +171,7 @@ select
 	 border: 1px solid #F0005E;
 	 background: none;
 	 color: #474747;
+	 border-radius: 3px;
 }
 
 .clearfix::after,
