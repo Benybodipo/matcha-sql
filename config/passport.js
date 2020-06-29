@@ -1,5 +1,4 @@
 const express 			= require('express');
-const app 				= express();
 const passport 		= require('passport');
 const LocalStrategy 	= require('passport-local').Strategy;
 const bcrypt 			= require('bcryptjs');
@@ -11,13 +10,20 @@ const geoip = require('geoip-lite');
 const http = require('http'); 
 
 module.exports = function() {
-	passport.use(new LocalStrategy(function(username, password, done)
+	passport.use(new LocalStrategy({
+		passReqToCallback: true,
+	},function(req, username, password, done)
 	{
 		let user = connection.query("SELECT * FROM users WHERE username=? AND active=? LIMIT 1", [username, 1]);
+		
+		if (!user.length) {
+			req.flash('error', {msg: "Invalid username or password."});
+			req.flash('inputs', req.body);
+			
+			return done(null, false);
+		}
 
-		if (!user.length) return done(null, false);
-
-		user = user[0];
+		[user] = user;
 		bcrypt.compare(password, user.password, function(err, isMatch){
 			if (err) throw err;
 			
@@ -46,8 +52,12 @@ module.exports = function() {
 				
 				// return done(null, user);
 			}
-			else
-				return done(null, false, { message: 'Wrong password!'});
+			else{
+				req.flash('error', {msg: "Invalid username or password."});
+				req.flash('inputs', req.body);
+				
+				return done(null, false);
+			}
 		});
 	}));
 }

@@ -14,11 +14,12 @@
 		<link rel="stylesheet" href="/css/{{this}}.css">
 	{{/each}}
 	<title>{{title}}</title>
+	<script src="/js/jquery-3.3.1.js"></script>
 	<script>
-		var myId = {{user.id}}
+		//var myId = ({{user.id}}) ? {{user.id}} :  null;
 	</script>
 </head>
-<body>
+<body style="position: relative;">
 	<div class="cover">
 		<div class="img-container clearfix" id="image_wrapper">
 			<div class="top-icons">
@@ -102,4 +103,4 @@
 			</nav>
 		</div>
 	</header>
-	<main>
+	

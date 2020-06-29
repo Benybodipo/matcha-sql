@@ -27,13 +27,14 @@ module.exports.register = function(req, res) {
 	req.check("email", "Invalid e-mail").isEmail().normalizeEmail();
 	req.check("password").isLength({ min: 6 });
 	req.check("password2", "Password don't match").isLength({ min: 6}).equals(req.body.password);
+	
 
 	var errors = req.validationErrors();
 
 	if (errors)
-	{
-		content.errors = errors;
-		res.render("index", content);
+	{	
+		req.flash('error', errors);
+		return res.redirect("/");
 	}
 	else
 	{
@@ -210,18 +211,21 @@ module.exports.forgotPassword = (req, res) => {
 		css: ["home"],
 		errors: null,
 	};
+	content.inputs = (req.session.flash.inputs) ? req.session.flash.inputs[0] : {};
+	
 
 	if (req.method == 'GET')
 		return res.render('forgot-password', content);
 	else if (req.method == 'POST' )
 	{
-		req.check("email", "Invalid e-mail").isEmail().normalizeEmail();
+		req.check("email", "Invalid email address format").notEmpty().isEmail().normalizeEmail();
 		var errors = req.validationErrors();
 		
 		if (errors)
 		{
-			content.errors = errors;
-			res.render("forgot-password", content);
+			req.flash('error', errors);
+			req.flash('inputs', req.body);
+			res.redirect("/forgot-password");
 		}
 		else
 		{
@@ -247,14 +251,16 @@ module.exports.forgotPassword = (req, res) => {
 					transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info)
 					{
 						if (err) throw err;
-						res.redirect('/login'); //With flash please check your email inbox
 					});
+					req.flash('success', 'Request successfully sent. Please check out you email inbox.');
+					return res.redirect('/login');
 				}
-
-				res.json(req.body);
 			}
-			else
-				return res.json('No such email address found!');
+			else{
+				req.flash('error', {msg: "Email Address not fount."});
+				req.flash('inputs', req.body);
+				res.redirect("/forgot-password");
+			}
 		}
 	}
 		

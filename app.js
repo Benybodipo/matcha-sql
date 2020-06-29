@@ -8,12 +8,15 @@ const passport = require('passport');
 const bodyParser = require('body-parser');
 const MySQLStore = require('express-mysql-session')(session);
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcryptjs');
 const path = require('path');
 const hbs = require('express-handlebars');
 const nodemailer = require('nodemailer');
-const Notifications = require('./models/notifications.model');
 const expressip = require('express-ip');
+const back = require('express-back');
+
+// const flash = require('req-flash');
+const flash = require('express-flash');
+
 
 app.use(expressip().getIpInfoMiddleware);
 
@@ -43,6 +46,7 @@ app.use(session({
 	}),
 	// cookie: {maxAge: 180 * 60 * 1000}
 }));
+app.use(flash());
 
 // PASSPORT
 app.use(passport.initialize());
@@ -53,7 +57,7 @@ app.use(function(req,res,next){
 	res.locals.user=req.user
     next();
 });
-  
+app.use(back());
 
 var indexController = require('./controllers/index-controller'),
 	loginController = require('./controllers/login-controller'),
@@ -70,9 +74,9 @@ var users = require('./controllers/users.contoller.js');
 	- GETS
 ======================*/
 app.get("/", indexController);
-app.get("/login", loginController);
-app.get("/login/:username", loginController);
-app.get("/login/:username/:id/:token/:type", loginController);
+app.get("/login", loginController.index);
+app.get("/login/:username", loginController.index);
+app.get("/login/:username/:id/:token/:type", loginController.index);
 
 app.get("/forgot-password", users.forgotPassword);
 app.get("/reset-password/:user_id/:token/:type", users.resetPassword);
@@ -107,7 +111,7 @@ app.get("/logout", authenticationMiddleware(), function(req, res){
 	- POSTS
 ======================*/
 app.post('/register', users.register);
-app.post("/login", passport.authenticate('local', {
+app.post("/login", loginController.login, passport.authenticate('local', {
 	successRedirect: '/home',
 	failureRedirect: '/login'
 }));

@@ -1,4 +1,6 @@
 const TokenGenerator = require('uuid-token-generator');
+// const { messages } = require('../models/schemas');
+
 module.exports = function(req, res)
 {
 	var currentTime =  new Date();

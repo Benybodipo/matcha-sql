@@ -1,5 +1,11 @@
 {{> header}}
 <main>
+	{{#if messages.success}}
+		<div class="message">
+			<p>{{messages.success}}</p>
+			<span>x</span>
+		</div>
+	{{/if}}
 	<div id="hero-section">
 		<div class="container">
 			{{{body}}}

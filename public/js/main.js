@@ -78,6 +78,10 @@ $(function(){
 		}
 	});
 
+	$('main > .message span').click((e) => {
+		e.preventDefault();
+		$('main > .message').fadeOut(300);
+	})
 
 
 });

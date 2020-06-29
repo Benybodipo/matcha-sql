@@ -1,14 +1,36 @@
+
 {{#if isAuthenticated}}
 	<h1>Home</h1>
 {{else}}
 	<form action="/register" class="register clearfix" method="post">
 		<h2>SIGN UP</h2>
-		<input name="firstname" class="input" type="text" placeholder="First name">
-		<input name="email" class="input" type="text" placeholder="Email address">
-		<input name="lastname" class="input" type="text" placeholder="Last Name">
-		<input name="password" class="input" type="text" placeholder="Password">
-		<input name="username" class="input" type="text" placeholder="Username">
-		<input name="password2" class="input" type="text" placeholder="Confitm password">
+		<div class="field">
+			<input name="firstname" class="input" type="text" placeholder="First name">
+			<small></small>
+		</div>
+		<div class="field">
+			<input name="email" class="input" type="text" placeholder="Email address">
+			<small></small>
+		</div>
+		<hr style="width: 100%;">
+		<div class="field">
+			<input name="lastname" class="input" type="text" placeholder="Last Name">
+			<small></small>
+		</div>
+		<div class="field">
+			<input name="password" class="input" type="text" placeholder="Password">
+			<small></small>
+		</div>
+		<hr style="width: 100%;">
+		<div class="field">
+			<input name="username" class="input" type="text" placeholder="Username">
+			<small></small>
+		</div>
+		<div class="field">
+			<input name="password2" class="input" type="text" placeholder="Confitm password">
+			<small></small>
+		</div>
+		<hr style="width: 100%;">
 		<label for="" id="dob">Birthdate</label>
 		<label for="">Day:
 		<select class="" name="day">
@@ -33,9 +55,17 @@
 		</label>
 		<br>
 		<span class="gender">
-			<label for=""><input type="radio" name="gender" value="male">Male</label>
+			<label for=""><input type="radio" name="gender" value="male" checked>Male</label>
 			<label for=""><input type="radio" name="gender" value="female">Female</label>
 		</span>
+		<hr style="width: 100%;">
 		<button class="btn shallow fill">SIGN UP</button>
 	</form>
+{{/if}}
+{{#if messages.error}}
+	<script>
+		{{#each messages.error}}
+				$(`input[name="{{{this.param}}}"] + small`).css({'color': 'red'}).text(`{{{this.msg}}}`);
+		{{/each}}
+	</script>
 {{/if}}

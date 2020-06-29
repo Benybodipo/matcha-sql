@@ -23,7 +23,7 @@ nav .btn-register
 form label
 {
 	font-size: 1.2em;
-	margin-right: 25px;
+	padding-right: 17px;
 	float: left;
 	font-weight: bold;
 	color: #F0005E;
@@ -34,12 +34,20 @@ form label:nth-child(1)
 	color: #1390c1;
 }
 
-form .input
+form .field
 {
 	width: 48%;
+	float: left;
+	margin-bottom: 10px;
 }
 
-form .input:nth-child(odd)
+form input
+{
+	margin-bottom: 0 !important;
+}
+
+/* form .input:nth-child(odd) */
+form .field:nth-child(odd)
 {
 	float: right;
 }

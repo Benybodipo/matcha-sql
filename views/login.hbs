@@ -1,7 +1,20 @@
 <form action="/login" method="post" class="register clearfix">
 	<h2>LOG IN</h2>
-	<input class="input" name="username" type="text" placeholder="Username" value="{{username}}">
-	<input class="input" name="password" type="text" placeholder="Password">
-	<a href="/forgot-password">Forgot password?</a>
+	<p class="err-msg"></p>
+	<input class="input" name="username" type="text" placeholder="Username" value="{{inputs.username}}">
+	<small></small>
+	<input class="input" name="password" type="text" placeholder="Password" value="{{inputs.password}}">
+	<small></small>
+	<a style="width: 100%;" href="/forgot-password">Forgot password?</a>
 	<button class="btn shallow fill">SIGN UP</button>
 </form>
+{{#if messages.error}}		
+	<script>
+		{{#each messages.error}}
+			if (`{{{this.param}}}`)
+				$(`input[name="{{{this.param}}}"] + small`).css({'color': 'red'}).text(`{{{this.msg}}}`);
+			else
+				$('p.err-msg').css({'color': 'red', 'text-align': 'center', 'margin-bottom': '15px'}).text(`{{{this.msg}}}`);
+		{{/each}}
+	</script>
+{{/if}}
