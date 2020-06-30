@@ -20,20 +20,26 @@ module.exports.register = function(req, res) {
 		errors: null,
 		success: null
 	};
+	
 
 	req.check("firstname", "First name too short").notEmpty().isLength({ min: 3 });
 	req.check("lastname", "Last name too short").notEmpty().isLength({min: 3});
 	req.check("username", "Username too short").notEmpty().isLength({ min: 3 });
 	req.check("email", "Invalid e-mail").isEmail().normalizeEmail();
+	req.check("gender").notEmpty();
 	req.check("password").isLength({ min: 6 });
 	req.check("password2", "Password don't match").isLength({ min: 6}).equals(req.body.password);
 	
 
 	var errors = req.validationErrors();
-
+	
 	if (errors)
 	{	
 		req.flash('error', errors);
+		req.flash('inputs', req.body);
+		console.log(errors);
+		
+		
 		return res.redirect("/");
 	}
 	else
@@ -72,6 +78,7 @@ module.exports.register = function(req, res) {
 						transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info)
 						{
 							if (err) throw err;
+							req.flash('success', 'Request successfully sent. Please check out you email inbox.');
 							res.redirect('/login');
 						});
 					}
@@ -82,11 +89,18 @@ module.exports.register = function(req, res) {
 		}
 		else
 		{
-			if (user.email && user.email == obj.email)
-				errors = "Email Address already in use";
-			else if (user.username && user.username == obj.username)
-				errors = "Username already in use";
-			return res.json(errors);
+			var errors = [];
+			
+			if (user[0].email && user[0].email == req.body.email)
+				errors.push({param: 'email', msg: 'Email address already in use.'})
+			if (user[0].username && user[0].username == req.body.username)
+				errors.push({param: 'username', msg: 'Username already in use.'});
+
+			req.flash('error', errors);
+			req.flash('inputs', req.body);
+			console.log(errors);
+			
+			return res.redirect('/');
 		}
 	}
 }

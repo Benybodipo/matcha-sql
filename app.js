@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const MySQLStore = require('express-mysql-session')(session);
 const LocalStrategy = require('passport-local').Strategy;
 const path = require('path');
-const hbs = require('express-handlebars');
+const xhbs = require('express-handlebars');
 const nodemailer = require('nodemailer');
 const expressip = require('express-ip');
 const back = require('express-back');
@@ -20,11 +20,20 @@ const flash = require('express-flash');
 
 app.use(expressip().getIpInfoMiddleware);
 
-app.engine('hbs', hbs({
+const hbs = xhbs.create({
 	extname: 'hbs',
 	defaultLayout: 'main',
-	layoutsDir: path.join(__dirname, 'views/layouts/')
-}));
+	layoutsDir: path.join(__dirname, 'views/layouts/'),
+	helpers: {
+		ifEquals: (value1, value2, options) => {
+			if(value1 === value2) {
+			  return options.fn(this);
+			}
+			return options.inverse(this);
+		  }
+	}
+})
+app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 
 app.use(express.static("public"));

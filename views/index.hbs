@@ -5,58 +5,83 @@
 	<form action="/register" class="register clearfix" method="post">
 		<h2>SIGN UP</h2>
 		<div class="field">
-			<input name="firstname" class="input" type="text" placeholder="First name">
+			<input name="firstname" class="input" type="text" placeholder="First name" value="{{inputs.firstname}}">
 			<small></small>
 		</div>
 		<div class="field">
-			<input name="email" class="input" type="text" placeholder="Email address">
-			<small></small>
-		</div>
-		<hr style="width: 100%;">
-		<div class="field">
-			<input name="lastname" class="input" type="text" placeholder="Last Name">
-			<small></small>
-		</div>
-		<div class="field">
-			<input name="password" class="input" type="text" placeholder="Password">
+			<input name="lastname" class="input" type="text" placeholder="Last Name" value="{{inputs.lastname}}">
 			<small></small>
 		</div>
 		<hr style="width: 100%;">
 		<div class="field">
-			<input name="username" class="input" type="text" placeholder="Username">
+			<input name="email" class="input" type="text" placeholder="Email address" value="{{inputs.email}}">
 			<small></small>
 		</div>
 		<div class="field">
-			<input name="password2" class="input" type="text" placeholder="Confitm password">
+			<input name="username" class="input" type="text" placeholder="Username" value="{{inputs.username}}">
+			<small></small>
+		</div>
+		<hr style="width: 100%;">
+		<div class="field">
+			<input name="password" class="input" type="text" placeholder="Password" value="{{inputs.password}}">
+			<small></small>
+		</div>
+		<div class="field">
+			<input name="password2" class="input" type="text" placeholder="Confitm password" value="{{inputs.password2}}">
 			<small></small>
 		</div>
 		<hr style="width: 100%;">
 		<label for="" id="dob">Birthdate</label>
 		<label for="">Day:
 		<select class="" name="day">
-			{{#each days}}
-				<option value="{{this}}">{{this}}</option>
+			{{#each days as |day|}}
+				{{#ifEquals day ../inputs.day}}
+					<option value="{{day}}" selected>{{day}}</option>
+				{{else}}
+					<option value="{{day}}">{{day}}</option>
+				{{/ifEquals}}
 			{{/each}}
 		</select>
 		</label>
 		<label for="">Month:
 		<select class="" name="month">
-			{{#each months}}
-				<option value="{{this}}">{{this}}</option>
+			{{#each months as |month|}}
+				{{#ifEquals month ../inputs.month}}
+					<option value="{{month}}" selected>{{month}}</option>
+				{{else}}
+					<option value="{{month}}" >{{month}}</option>
+				{{/ifEquals}}
 			{{/each}}
 		</select>
 		</label>
 		<label for="">Year:
 		<select class="" name="year">
-			{{#each years}}
-				<option value="{{this}}">{{this}}</option>
+			{{#each years as |year|}}
+				{{#ifEquals year ../inputs.year}}
+					<option value="{{year}}" selected>{{year}}</option>
+				{{else}}
+					<option value="{{year}}">{{year}}</option>
+				{{/ifEquals}}
 			{{/each}}
 		</select>
 		</label>
 		<br>
 		<span class="gender">
-			<label for=""><input type="radio" name="gender" value="male" checked>Male</label>
-			<label for=""><input type="radio" name="gender" value="female">Female</label>
+			{{#if inputs.gender}}
+				{{#ifEquals inputs.gender 'male'}}
+					<label for=""><input type="radio" name="gender" value="male" checked>Male</label>
+				{{else}}
+					<label for=""><input type="radio" name="gender" value="male">Male</label>
+				{{/ifEquals}}
+				{{#ifEquals inputs.gender 'female'}}
+					<label for=""><input type="radio" name="gender" value="female" checked>Female</label>
+				{{else}}
+					<label for=""><input type="radio" name="gender" value="female">Female</label>
+				{{/ifEquals}}
+			{{else}}
+				<label for=""><input type="radio" name="gender" value="male" checked>Male</label>
+				<label for=""><input type="radio" name="gender" value="female">Female</label>
+			{{/if}}
 		</span>
 		<hr style="width: 100%;">
 		<button class="btn shallow fill">SIGN UP</button>

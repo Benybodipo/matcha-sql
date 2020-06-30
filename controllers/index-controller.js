@@ -19,8 +19,15 @@ module.exports = function(req, res)
 
 	if (req.isAuthenticated())
 		res.redirect("/home");
-	else
+	else{
+		content.inputs = (req.session.flash.inputs) ? req.session.flash.inputs[0] : {};
+		if (content.inputs)
+		{
+			content.inputs.day = parseInt(content.inputs.day, 10);
+			content.inputs.year = parseInt(content.inputs.year, 10); 
+		}
 		res.render('index', content);
+	}
 
 	function range(start, end)
 	{
