@@ -72,13 +72,13 @@ module.exports.register = function(req, res) {
 						var email = {
 							to: "benybodipo@gmail.com",
 							sbj: "ACCOUNT ACTIVATION",
-							msj: `Follow the link <a href='http://localhost:7500/login/${username}/${id}/${token.toSring()}/1'>CLICK</a>`
+							msj: `Follow the link <a href='http://localhost:7500/login/${username}/${id}/${token}/1'>CLICK</a>`
 						};
 
 						transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info)
 						{
 							if (err) throw err;
-							req.flash('success', 'Request successfully sent. Please check out you email inbox.');
+							req.flash('success', 'You have successfully registered. Please check out you email inbox for the activation link.');
 							res.redirect('/login');
 						});
 					}
@@ -98,7 +98,6 @@ module.exports.register = function(req, res) {
 
 			req.flash('error', errors);
 			req.flash('inputs', req.body);
-			console.log(errors);
 			
 			return res.redirect('/');
 		}
