@@ -19,7 +19,8 @@ module.exports = function(req, res)
 
 	if (req.isAuthenticated())
 		res.redirect("/home");
-	else{
+	else
+	{
 		content.inputs = (req.session.flash.inputs) ? req.session.flash.inputs[0] : {};
 		if (content.inputs)
 		{

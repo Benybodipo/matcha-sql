@@ -35,7 +35,7 @@ $(function()
 	$(".age-max").text(params.age.max);
 	$(".distance").text(params.distance);
 	$(".popularity").text(params.popularity);
-	$("[name=sex]").eq(params.sex - 1).attr("checked", true);
+	$("[name=sex][value="+params.sex+"]").attr("checked", true);
 
 	
 	if (params.interests.length){
@@ -107,6 +107,8 @@ $(function()
 
 	$("[name=sex]").on("change", function(){
 		params.sex = $(this).val();
+		console.log(params.sex); 
+		
 	});
 	
 
@@ -131,7 +133,7 @@ $(function()
 		}
 		else
 			interests = 0;
-
+			
 		url = `${window.location.origin}/home/${params.age.min}/${params.age.max}/${params.distance}/${params.sex}/${interests}`;
 		
 		window.location.href = url;

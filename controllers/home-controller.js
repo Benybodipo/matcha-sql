@@ -22,18 +22,49 @@ module.exports = function(req, res)
 		isHome: (page == "home") ? true : false
 	};
 
-	// let query = (Object.keys(req.params).length) ? {
-	// 	_id: {$ne: req.user.id},
-	// 	age: {$gte: req.params.age_min, $lte: req.params.age_max},
-	// 	// 'preferences.interests': {$in: req.params.interests.split(',')},
-	// } : {_id: {$ne: req.user.id}};
+	let query, params;
+	if (Object.keys(req.params).length){
+		query = `SELECT *, COUNT(user_interests.interest_id) as count_interests FROM users
+				INNER JOIN images ON users.id=images.user_id  
+				INNER JOIN preferences ON users.id=preferences.user_id  
+				INNER JOIN user_interests ON users.id=user_interests.user_id 
+					WHERE users.id!=${req.user.id} 
+					AND images.is_profile_picture=1 
+					AND (users.age >= ? AND users.age <=?) `;
+		params = [req.params.age_min, req.params.age_max];
 
+		if (req.params.interests != '0'){
+			var interests = req.params.interests.split(',');
+			var str_interests = '('
+			for (i=0; i < interests.length; i++)
+			{
+				var tmp = (i < interests.length -  1) ? ', ':'';
+				str_interests += `${interests[i]}${tmp}`;
+				
+			}
+			str_interests+=')';
+			query += `AND user_interests.interest_id IN ${str_interests} AND user_interests.active=1 `;
+		}
+
+		if (req.params.gender == 'male' || req.params.gender == 'female'){
+			query += 'AND users.gender=? ';
+			params.push(req.params.gender)
+		}
+
+		query += 'GROUP BY users.id '
+		if (req.params.interests != '0')
+			query += 'ORDER BY COUNT(user_interests.interest_id) DESC'
+		query += ';'
+	}
+	else{
+		query = `SELECT * FROM users 
+		INNER JOIN images ON users.id=images.user_id
+		WHERE users.id!=? 
+			AND images.is_profile_picture=?;`;
+		params = [req.user.id, 1];
+	}
 	
-	if (parseInt(req.params.gender) <= gender.length )
-		query.gender = {$eq: gender[req.params.gender - 1]};
-	
-	const users = connection.query("SELECT * FROM users INNER JOIN images ON users.id=images.user_id WHERE users.id!=? AND images.is_profile_picture=?;", [req.user.id, 1]);
-	
-	content.users = users;
+	content.users = connection.query(query, params);
+
 	return res.render("home", content);
 }
