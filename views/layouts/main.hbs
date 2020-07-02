@@ -6,6 +6,12 @@
 				<span>x</span>
 			</div>
 		{{/if}}
+		{{#if messages.warning}}
+			<div class="message warning">
+				<p>{{messages.warning}}</p>
+				<span>x</span>
+			</div>
+		{{/if}}
 		<div class="container clearfix">
 			{{#if isHome}}
 				{{> search }}

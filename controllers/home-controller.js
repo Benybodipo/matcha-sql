@@ -57,11 +57,23 @@ module.exports = function(req, res)
 		query += ';'
 	}
 	else{
+		let preferences = connection.query('SELECT * FROM preferences WHERE user_id=? LIMIT 1;', [req.user.id])[0];
+
 		query = `SELECT * FROM users 
 		INNER JOIN images ON users.id=images.user_id
-		WHERE users.id!=? 
-			AND images.is_profile_picture=?;`;
-		params = [req.user.id, 1];
+		INNER JOIN preferences ON users.id=preferences.user_id
+		WHERE users.active=1
+		AND users.id!=? 
+		AND users.bio IS NOT NULL
+		AND images.is_profile_picture=?
+		AND users.age >=? AND users.age <=? `;
+		params = [req.user.id, 1, preferences.min_age, preferences.max_age];
+		
+		if (preferences.gender == 1 || preferences.gender == 2){
+			var tmp = (preferences.gender == 1) ? 'male' : 'female';
+			query += 'AND users.gender=?';
+			params.push(tmp);
+		}
 	}
 	
 	content.users = connection.query(query, params);

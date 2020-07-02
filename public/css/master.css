@@ -729,19 +729,17 @@ main > .message
     padding: 15px;
     text-align: center;
     font-size: 18px;
-    background: #a1daa1;
-    border: 1px solid green;
+    
     border-radius: 3px;
 }
-
 main > .message p
 {
-	color: darkgreen;
+    background-color: transparent;
 }
+
 
 main > .message span
 {
-	color: darkgreen;
 	position: absolute;
 	top: 15px;
 	right: 15px;
@@ -751,4 +749,34 @@ main > .message span
 main > .message span:hover
 {
 	color: red;
+}
+
+main > .message.success
+{
+	background: #a1daa1;
+    border: 1px solid green;
+}
+
+main > .message.success p
+{
+	color: darkgreen;
+}
+main > .message.success span
+{
+	color: darkgreen;
+}
+
+main > .message.warning
+{
+	background: rgba(228, 172, 69, 0.774);
+    border: 1px solid orange;
+}
+
+main > .message.warning p
+{
+	color: #000;
+}
+main > .message.warning span
+{
+	color: rgb(141, 96, 13);
 }

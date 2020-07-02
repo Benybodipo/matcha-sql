@@ -68,6 +68,7 @@ app.use(function(req,res,next){
 });
 app.use(back());
 
+
 var indexController = require('./controllers/index-controller'),
 	loginController = require('./controllers/login-controller'),
 	homeController = require('./controllers/home-controller'),
@@ -131,18 +132,26 @@ app.post("/reset-password", users.resetPassword);
 app.post("/inbox", inboxController.chat)
 app.post('/profile', users.profile);
 app.post("/likes", likeController.like);
-// app.post("/search", searchController.search);
 
 
 function authenticationMiddleware()
 {
 	return (req, res, next) => {
 		if (req.isAuthenticated()) {
+			if (req.user.bio == null || req.user.bio.trim() == ''){
+				if (req.session.flash)
+					if (!req.session.flash.warning)
+						req.flash('warning', 'Please complete you profile info in order to access the full features.');
+
+				
+			}
 			return next();
 		}
 	    res.redirect('/login');
 	}
 }
+
+
 
 app.listen(7500, function() {
 	console.log("runing on port 7500");
