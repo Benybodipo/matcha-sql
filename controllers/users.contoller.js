@@ -55,6 +55,7 @@ module.exports.register = function(req, res) {
 		if (!user.length)
 		{
 			hashPassword(password).then((password) => {
+				// Register new user
 				let sql = "INSERT INTO users(first_name, last_name, username, email, password, gender, birthday) VALUES(?, ?, ?, ?, ?, ?, ?);";
 
 				user = connection.query(sql, [firstname, lastname, username, req.body.email, password, gender, birthdate]);
@@ -63,6 +64,7 @@ module.exports.register = function(req, res) {
 					const id = user.insertId;
 					let token = new TokenGenerator(256, TokenGenerator.BASE62);
 
+					//Insert confirmation link
 					sql = 'INSERT INTO links(user_id, token, type) VALUES(?, ?, ?);';
 					insert = connection.query(sql, [id, token.generate(), 1]);
 

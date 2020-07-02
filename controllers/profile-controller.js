@@ -20,6 +20,12 @@ module.exports = function(req, res)
 		let user_interests = connection.query('SELECT interests.*, user_interests.* FROM interests LEFT JOIN user_interests  ON user_interests.interest_id=interests.id WHERE user_id=?;', [req.user.id]);
 		let images = connection.query('SELECT * FROM images WHERE user_id=?', [req.user.id]);
 
+		// if (!images.length)
+		// {
+		// 	var img = (req.user.gender == 'male') ? '/img/male.png' : '/img/female.jpeg';
+		// 	connection.query('INSERT INTO images(user_id, image, is_profile_picture) VALUEs(?, ?, ?);', [req.user.id, img, 1]);
+		// }
+
 		interests.forEach((interest, i) => {
 			let active = user_interests.find((obj)=>{
 				return (obj.active == 1 && obj.interest_id == interest.id);

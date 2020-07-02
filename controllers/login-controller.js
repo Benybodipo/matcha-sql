@@ -21,7 +21,11 @@ module.exports.index = function(req, res)
 		layout: 'index',
 		username: (req.params.username) ? req.params.username : ""
 	};
-	content.inputs = (req.session.flash.inputs) ? req.session.flash.inputs[0] : {};
+	if (req.session.flash)
+		if (req.session.flash.inputs)
+			content.inputs = req.session.flash.inputs[0];
+	else
+		content.inputs = {};
 	
 	const {id, token} = req.params;
 	if (token)

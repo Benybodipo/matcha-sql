@@ -30,14 +30,28 @@ module.exports = function() {
 			if (isMatch)
 			{
 				let birthday = new Date(user.birthday);
-				connection.query("UPDATE users SET age=? WHERE id=?", [getAge(birthday), user.id]);
+				let images = connection.query('SELECT * FROM images WHERE user_id=?;', [user.id]);
+				let preferences = connection.query('SELECT * FROM preferences WHERE user_id=?;', [user.id]);
 
+				if (!images.length)
+				{
+					var img = (user.gender == 'male') ? '/img/male.png' : '/img/female.jpeg';
+					connection.query('INSERT INTO images(user_id, image, is_profile_picture) VALUEs(?, ?, ?);', [user.id, img, 1]);
+				}
+				
+				if (!preferences.length)
+				{
+					var gender = (user.gender == 'male') ? 2 : 1;
+					sql = `INSERT INTO preferences (user_id, gender, distance, min_age, max_age) VALUES(?, ?, ?, ?, ?);`;
+					insert = connection.query(sql, [user.id, gender, 50, 18, 50]);
+				} 
+
+				connection.query("UPDATE users SET age=? WHERE id=?", [getAge(birthday), user.id]);
 				isOnline().then(online => {
 					if(online){
 						http.get({'host': 'api.ipify.org', 'port': 80, 'path': '/'}, function(resp) {
 							resp.on('data', function(ip) {
 								iplocate(ip.toString()).then(function(results) {
-									
 									let location = JSON.stringify(results, null, 2);
 									connection.query("UPDATE users SET location=? WHERE id=?", [location, user.id]);
 									return done(null, user);
