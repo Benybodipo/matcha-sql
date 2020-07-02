@@ -1,7 +1,9 @@
 <div id="info" class="clearfix">
 	<div id="profile-img">
 		<img src="{{profile_picture}}" alt=""><br>
-		<div class="star" data-id="{{_user.id}}"><i class="{{like}}"></i></div><br>
+		{{#if isProfileCompleted}}
+			<div class="star" data-id="{{_user.id}}"><i class="{{like}}"></i></div><br>
+		{{/if}}
 	</div>
 	<div id="about">
 		<h2>{{_user.username}}</h2>

@@ -40,6 +40,7 @@ module.exports = function(req, res)
 	// const distance =  GeoDistance.between({lat: -33.950033, lon: 18.495859}, {lat: location1.latitude, lon: location1.longituder});
 
 	// console.log(distance.human_readable());
+	content.isProfileCompleted = ((req.user.bio == null || req.user.bio.trim() == '') || !req.user.interests.length) ? false : true;
 	
 	
 

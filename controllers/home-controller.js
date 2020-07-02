@@ -21,7 +21,7 @@ module.exports = function(req, res)
 		js: ["search"],
 		isHome: (page == "home") ? true : false
 	};
-
+	
 	let query, params;
 	if (Object.keys(req.params).length){
 		query = `SELECT *, COUNT(user_interests.interest_id) as count_interests FROM users
@@ -29,6 +29,9 @@ module.exports = function(req, res)
 				INNER JOIN preferences ON users.id=preferences.user_id  
 				INNER JOIN user_interests ON users.id=user_interests.user_id 
 					WHERE users.id!=${req.user.id} 
+					AND users.active=1
+					AND (user_interests.user_id!=${req.user.id} AND user_interests.active=1)
+					AND users.bio IS NOT NULL
 					AND images.is_profile_picture=1 
 					AND (users.age >= ? AND users.age <=?) `;
 		params = [req.params.age_min, req.params.age_max];
@@ -40,7 +43,6 @@ module.exports = function(req, res)
 			{
 				var tmp = (i < interests.length -  1) ? ', ':'';
 				str_interests += `${interests[i]}${tmp}`;
-				
 			}
 			str_interests+=')';
 			query += `AND user_interests.interest_id IN ${str_interests} AND user_interests.active=1 `;
@@ -62,21 +64,24 @@ module.exports = function(req, res)
 		query = `SELECT * FROM users 
 		INNER JOIN images ON users.id=images.user_id
 		INNER JOIN preferences ON users.id=preferences.user_id
+		INNER JOIN user_interests ON users.id=user_interests.user_id
 		WHERE users.active=1
+		AND (user_interests.user_id!=? AND user_interests.active=1)
 		AND users.id!=? 
 		AND users.bio IS NOT NULL
 		AND images.is_profile_picture=?
 		AND users.age >=? AND users.age <=? `;
-		params = [req.user.id, 1, preferences.min_age, preferences.max_age];
+		params = [req.user.id, req.user.id, 1, preferences.min_age, preferences.max_age];
 		
 		if (preferences.gender == 1 || preferences.gender == 2){
 			var tmp = (preferences.gender == 1) ? 'male' : 'female';
 			query += 'AND users.gender=?';
 			params.push(tmp);
 		}
+		query += ' GROUP BY users.id;'
 	}
 	
 	content.users = connection.query(query, params);
-
+	
 	return res.render("home", content);
 }

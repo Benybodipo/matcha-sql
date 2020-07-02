@@ -63,7 +63,8 @@ app.use(passport.session());
 
 app.use(function(req,res,next){
 	res.locals.isAuthenticated = req.isAuthenticated();
-	res.locals.user=req.user
+	res.locals.user=req.user;
+	
     next();
 });
 app.use(back());
@@ -79,6 +80,11 @@ var indexController = require('./controllers/index-controller'),
 	inboxController = require('./controllers/inbox-controller');
 
 var users = require('./controllers/users.contoller.js');
+const { interests } = require('./models/schemas');
+let middlewares = {
+	isProfileCompleted: isProfileCompleted(),
+	authenticationMiddleware: authenticationMiddleware()
+}
 
 /*======================
 	- GETS
@@ -91,24 +97,24 @@ app.get("/login/:username/:id/:token/:type", loginController.index);
 app.get("/forgot-password", users.forgotPassword);
 app.get("/reset-password/:user_id/:token/:type", users.resetPassword);
 
-app.get("/home", authenticationMiddleware(), homeController);
-app.get("/user/:id", authenticationMiddleware(), userController);
+app.get("/home", middlewares.authenticationMiddleware, homeController);
+app.get("/user/:id", middlewares.authenticationMiddleware, userController);
 app.get("/home/:age_min/:age_max/:distance/:gender/:interests", authenticationMiddleware(), homeController);
 app.get("/profile", authenticationMiddleware(), profileController);
 
-app.get("/inbox", authenticationMiddleware(), inboxController.page);
-app.get("/inbox/:receiver", authenticationMiddleware(), inboxController.getMessages);
+app.get("/inbox", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.page);
+app.get("/inbox/:receiver", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.getMessages);
 
-app.get("/matches", authenticationMiddleware(), inboxController.matches);
-app.get("/fans", authenticationMiddleware(), inboxController.fans);
-app.get("/visitors", authenticationMiddleware(), inboxController.visitors);
+app.get("/matches", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.matches);
+app.get("/fans", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.fans);
+app.get("/visitors", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.visitors);
 
-app.get("/notifications", authenticationMiddleware(), notifications.index);
-app.get("/notifications/:id", authenticationMiddleware(), notifications.single);
-app.get("/notifications/:id/delete", authenticationMiddleware(), notifications.delete);
-app.post("/notifications/get-all", authenticationMiddleware(), notifications.getAll);
-app.post("/notifications/delete-all", authenticationMiddleware(), notifications.deleteAll);
-app.post("/notifications/mark-all-as-read", authenticationMiddleware(), notifications.markAllAsRead);
+app.get("/notifications", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.index);
+app.get("/notifications/:id", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.single);
+app.get("/notifications/:id/delete", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.delete);
+app.post("/notifications/get-all", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.getAll);
+app.post("/notifications/delete-all", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.deleteAll);
+app.post("/notifications/mark-all-as-read", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.markAllAsRead);
 
 
 app.get("/logout", authenticationMiddleware(), function(req, res){
@@ -138,16 +144,27 @@ function authenticationMiddleware()
 {
 	return (req, res, next) => {
 		if (req.isAuthenticated()) {
-			if (req.user.bio == null || req.user.bio.trim() == ''){
-				if (req.session.flash)
-					if (!req.session.flash.warning)
-						req.flash('warning', 'Please complete you profile info in order to access the full features.');
-
-				
-			}
+			let interests = connection.query('SELECT * FROM user_interests WHERE user_id=? AND active=1;', [req.user.id]);
+			req.user.interests = interests;
 			return next();
 		}
-	    res.redirect('/login');
+	    return res.redirect('/login');
+	}
+}
+
+function isProfileCompleted()
+{
+	return (req, res, next) => {
+		
+
+		if ((req.user.bio == null || req.user.bio.trim() == '') || !req.user.interests.length){
+			
+			if (req.session.flash)
+				if (!req.session.flash.warning)
+					req.flash('warning', 'Please complete you profile info in order to access the full features.');
+			return res.redirect('/profile');
+		}
+		return next();
 	}
 }
 

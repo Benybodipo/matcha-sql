@@ -135,19 +135,15 @@ module.exports.profile = function(req, res) {
 			connection.query(stm, params);
 
 			// UPDATE INTERESTS
-			if (interests.length)
-			{
-				query = connection.query('UPDATE user_interests SET active=? WHERE user_id=?;', [0, req.user.id]);
+			query = connection.query('UPDATE user_interests SET active=? WHERE user_id=?;', [0, req.user.id]);
+			interests.forEach((id) => {
+				query = connection.query('SELECT * FROM user_interests WHERE user_id=? AND interest_id=?;', [req.user.id, id]);
 				
-				interests.forEach((id) => {
-					query = connection.query('SELECT * FROM user_interests WHERE user_id=? AND interest_id=?;', [req.user.id, id]);
-					
-					if (query.length)
-						quey = connection.query('UPDATE user_interests SET active=? WHERE user_id=? AND interest_id=?;', [1, req.user.id, id]);
-					else
-						query = connection.query('INSERT INTO user_interests(user_id, interest_id, active) VALUES(?, ?, ?);', [req.user.id, id, 1]);
-				});
-			}
+				if (query.length)
+					quey = connection.query('UPDATE user_interests SET active=? WHERE user_id=? AND interest_id=?;', [1, req.user.id, id]);
+				else
+					query = connection.query('INSERT INTO user_interests(user_id, interest_id, active) VALUES(?, ?, ?);', [req.user.id, id, 1]);
+			});
 			
 			return res.json(query);
 		}
@@ -199,7 +195,7 @@ module.exports.profile = function(req, res) {
 							res.json(`${field} already in use`);
 						else
 						{
-							query = connection.query(`UPDATE users SET ${field}=?;`, [value]);
+							query = connection.query(`UPDATE users SET ${field}=? WHERE id=?;`, [value, req.user.id]);
 							return res.json(query);
 						}
 					}

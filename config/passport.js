@@ -8,6 +8,7 @@ const iplocate = require("node-iplocate");
 // Geolocation
 const geoip = require('geoip-lite');
 const http = require('http'); 
+const { interests } = require('../models/schemas');
 
 module.exports = function() {
 	passport.use(new LocalStrategy({
@@ -44,8 +45,12 @@ module.exports = function() {
 					var gender = (user.gender == 'male') ? 2 : 1;
 					sql = `INSERT INTO preferences (user_id, gender, distance, min_age, max_age) VALUES(?, ?, ?, ?, ?);`;
 					insert = connection.query(sql, [user.id, gender, 50, 18, 50]);
-				} 
-
+				}
+				
+				let interests = connection.query('SELECT * FROM user_interests WHERE user_id=? AND active=1;', [user.id]);
+		
+				user.interests = interests;
+				
 				connection.query("UPDATE users SET age=? WHERE id=?", [getAge(birthday), user.id]);
 				isOnline().then(online => {
 					if(online){

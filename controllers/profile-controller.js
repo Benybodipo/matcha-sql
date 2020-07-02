@@ -20,6 +20,12 @@ module.exports = function(req, res)
 		let user_interests = connection.query('SELECT interests.*, user_interests.* FROM interests LEFT JOIN user_interests  ON user_interests.interest_id=interests.id WHERE user_id=?;', [req.user.id]);
 		let images = connection.query('SELECT * FROM images WHERE user_id=?', [req.user.id]);
 
+		if (req.user.bio == null || req.user.bio.trim() == ''){
+			if (req.session.flash)
+				if (!req.session.flash.warning)
+					req.flash('warning', 'Please complete you profile info in order to access the full features.');
+		}
+		
 
 		interests.forEach((interest, i) => {
 			let active = user_interests.find((obj)=>{
