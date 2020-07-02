@@ -21,7 +21,9 @@ module.exports = function(req, res)
 		res.redirect("/home");
 	else
 	{
-		content.inputs = (req.session.flash.inputs) ? req.session.flash.inputs[0] : {};
+		if (req.session.flash)
+				if (!req.session.flash.inputs)
+					content.inputs = (req.session.flash.inputs) ? req.session.flash.inputs[0] : {};
 		if (content.inputs)
 		{
 			content.inputs.day = parseInt(content.inputs.day, 10);

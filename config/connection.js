@@ -2,6 +2,8 @@ const mysql = require('mysql');
 const util = require( 'util' );
 const schemas = require('../models/schemas');
 const MySql = require('sync-mysql');
+const faker = require('faker');
+const bcrypt 		 = require('bcryptjs');
 
 const connection = new MySql({
 	host: 'localhost',
@@ -48,4 +50,50 @@ const connection = new MySql({
 // 	}
 // }
 
+let gender = ['male', 'female'];
+let count = 500; //Seeding the database number of user accounts
+
+count = 0;
+
+for (i=0; i < 2; i++)
+{
+	hashPassword('Abc@123').then((password) => {
+		let user = {
+			firstname: faker.name.findName(),
+			lastname: faker.name.lastName(),
+			username: (faker.name.suffix() + faker.name.lastName()).toLocaleLowerCase(),
+			email: faker.internet.email(),
+			password: password,
+			gender: gender[getRandomInt(2)],
+			birthday: `2000-10-30`
+		}
+
+		if (connection.query(`SELECT * FROM users WHERE username=? OR email=?;`, [user.username, user.email]).length)
+			i--;
+		else
+		{
+			let sql = "INSERT INTO users(first_name, last_name, username, email, password, gender, birthday) VALUES(?, ?, ?, ?, ?, ?, ?);";
+			let params = [user.firstname, user.lastname, user.username, user.email, user.password, user.gender, user.birthday];
+			user = connection.query(sql, params);
+		}
+	})
+	
+}
+
 module.exports = connection;
+async function hashPassword (password) {
+	const saltRounds = 10;
+  
+	const hashedPassword = await new Promise((resolve, reject) => {
+	  bcrypt.hash(password, saltRounds, function(err, hash) {
+		if (err) reject(err)
+		resolve(hash)
+	  });
+	})
+  
+	return hashedPassword
+}
+
+function getRandomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+}

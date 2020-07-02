@@ -36,6 +36,7 @@
     "express-session": "^1.15.6",
     "express-validator": "^5.3.0",
     "externalip": "^1.0.2",
+    "faker": "^4.1.0",
     "geo-distance": "^0.2.0",
     "geoip-lite": "^1.4.1",
     "geolib": "^3.2.1",

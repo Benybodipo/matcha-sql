@@ -5,6 +5,7 @@ const bcrypt 			= require('bcryptjs');
 const isOnline = require('is-online');
 const connection 	 = require('../config/connection'); 
 const iplocate = require("node-iplocate");
+const faker = require('faker');
 // Geolocation
 const geoip = require('geoip-lite');
 const http = require('http'); 

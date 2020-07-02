@@ -7,6 +7,7 @@ const passport 		 = require('passport');
 const nodemailer 	 = require('nodemailer');
 const mail 			 = require("../config/nodemailer");
 const TokenGenerator = require('uuid-token-generator');
+const faker = require('faker');
 require('../config/passport')(passport);
 
 /*============================
@@ -204,12 +205,11 @@ module.exports.profile = function(req, res) {
 		}
 		else if(action == "delete-account")
 		{
-			// connection.query('DELETE users WHERE id=?;', [req.user.id]);
-			// req.logout;
-			// req.session.destroy();
-			return res.json({action: 'Delete account!'});
+			connection.query('UPDATE users SET active=? WHERE id=?;', [0, req.user.id]);
+			req.logout;
+			req.session.destroy();
+			return res.json({success: 1});
 		}
-		console.log(req.body);
 		
 }
 

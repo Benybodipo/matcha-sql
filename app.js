@@ -113,7 +113,6 @@ app.get("/visitors", middlewares.authenticationMiddleware, middlewares.isProfile
 
 app.get("/blocked-list", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, blockedList.index);
 app.get("/block-user/:id", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, blockedList.block_user);
-
 app.get("/blocked-user/:id", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, blockedList.unblock_user);
 
 app.get("/notifications", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.index);

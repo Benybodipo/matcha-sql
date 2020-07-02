@@ -7,7 +7,7 @@ const Preferences = require('../models/preferences.model');
 // Geolocation
 const geoip = require('geoip-lite');
 const http = require('http'); 
-
+const faker = require('faker');
 
 
 module.exports = function(req, res)
