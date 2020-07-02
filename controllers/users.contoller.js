@@ -248,15 +248,16 @@ module.exports.forgotPassword = (req, res) => {
 			{
 				let {id} = select[0];
 				let token = new TokenGenerator(256, TokenGenerator.BASE62);
-				let insert = connection.query('INSERT INTO links(user_id, token, type) VALUES(?, ?, ?);', [id, token.generate(), 2]);
+				token = token.generate();
+				let insert = connection.query('INSERT INTO links(user_id, token, type) VALUES(?, ?, ?);', [id, token, 2]);
 	
-				if (insert.insertId)
+				if (insert.insertId) 
 				{
 					var transporter = nodemailer.createTransport(mail.credentials);
 					var email = {
 						to: "benybodipo@gmail.com",
 						sbj: "RESET PASSWORD",
-						msj: `<a href='${req.protocol}://${req.get('host')}/reset-password/${id}/${token.generate()}/2'>Click here</a> to reset your password`
+						msj: `<a href='${req.protocol}://${req.get('host')}/reset-password/${id}/${token}/2'>Click here</a> to reset your password`
 					};
 
 					transporter.sendMail(mail.options(email.to, email.sbj, email.msj), function (err, info)
@@ -299,10 +300,10 @@ module.exports.resetPassword = (req, res) => {
 				return res.render('reset-password', content);
 			}
 			else
-				return res.json('We have to redirect back with flash message!')
+				return res.redirect('/')
 		}
 		else
-			return res.json('We have to redirect back with flash message!')
+			return res.redirect('/')
 	}
 	else if (req.method == 'POST')
 	{
