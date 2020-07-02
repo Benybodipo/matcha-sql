@@ -1,13 +1,15 @@
 {{#each users}}
-	<div class="content">
-		<div class="user">
-			<img src="{{image}}" alt="">
-			<strong></strong>
-			<div class="status">
-				<span class="online"></span>
-				<small>{{username}}</small>
+	{{#if this}}
+		<div class="content">
+			<div class="user">
+				<img src="{{image}}" alt="">
+				<strong></strong>
+				<div class="status">
+					<span class="online"></span>
+					<small>{{username}}</small>
+				</div>
+				<a href="/user/{{user_id}}" class="btn">MORE</a>
 			</div>
-			<a href="/user/{{user_id}}" class="btn">MORE</a>
 		</div>
-	</div>
+	{{/if}}
 {{/each}}

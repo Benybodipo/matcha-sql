@@ -80,8 +80,20 @@ module.exports = function(req, res)
 		}
 		query += ' GROUP BY users.id;'
 	}
-	
-	content.users = connection.query(query, params);
+
+	let blocked = connection.query(`SELECT account_id FROM block_list WHERE user_id=${req.user.id}`);
+	let users = connection.query(query, params);
+
+	blocked = blocked.map(function (block){
+		return block.account_id;
+	})
+
+	let userss = connection.query(query, params).map(function (user) {
+		if (!blocked.includes(user.user_id))
+			return user
+	});
+
+	content.users = userss;
 	
 	return res.render("home", content);
 }

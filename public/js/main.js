@@ -34,7 +34,7 @@ $(function(){
 		$.ajax({
 			url: "/likes",
 			method: "POST",
-			data: {userId: userId},
+			data: {userId: userId}, 
 			dataType: "json",
 			success: function(data)
 			{

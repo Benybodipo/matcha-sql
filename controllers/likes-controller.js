@@ -32,9 +32,15 @@ module.exports.like = function(req, res){
 
 			return res.send({return: 1});
 		}
-		else
+
+		if (like.matched == 1)
 		{
-			
+			var message = `You have been unmatched by ${req.user.username}`;
+			var link = `${req.protocol}://${req.get('host')}/home`;
+			newNotification(req.user.id, id, 2, message, link);
+			connection.query('UPDATE likes SET matched=? WHERE id=?', [0, like.id]);
+
+			return res.send({return: 0});
 		}
 	}
 	else

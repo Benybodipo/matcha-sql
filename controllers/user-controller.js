@@ -33,13 +33,6 @@ module.exports = function(req, res)
 	content.like = (likes.length) ? "fas fa-star": "far fa-star";
 	content.preferences.gender = genderPrefence[preferences[0].gender - 1];
 	content._user.location = JSON.parse(content._user.location);
-
-	// const location1 = content._user.location;
-	// const location2 = JSON.parse(req.user.location);
-
-	// const distance =  GeoDistance.between({lat: -33.950033, lon: 18.495859}, {lat: location1.latitude, lon: location1.longituder});
-
-	// console.log(distance.human_readable());
 	content.isProfileCompleted = ((req.user.bio == null || req.user.bio.trim() == '') || !req.user.interests.length) ? false : true;
 	
 	

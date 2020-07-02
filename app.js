@@ -108,6 +108,14 @@ app.get("/inbox/:receiver", middlewares.authenticationMiddleware, middlewares.is
 app.get("/matches", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.matches);
 app.get("/fans", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.fans);
 app.get("/visitors", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, inboxController.visitors);
+app.get("/block-user/:id", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, function(req, res){
+
+	let select = connection.query('SELECT * FROM block_list WHERE user_id=? AND account_id=?;', [req.user.id, req.params.id]);
+	
+	if (!select.length)
+		connection.query('INSERT INTO block_list(user_id, account_id) VALUES(?, ?);', [req.user.id, req.params.id])
+	return res.redirect('/home');
+});
 
 app.get("/notifications", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.index);
 app.get("/notifications/:id", middlewares.authenticationMiddleware, middlewares.isProfileCompleted, notifications.single);

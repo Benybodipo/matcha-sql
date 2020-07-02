@@ -127,6 +127,15 @@ const visits = `CREATE TABLE IF NOT EXISTS visits (
     FOREIGN KEY (visited_id) REFERENCES users(id)
 );`;
   
+const block_list = `CREATE TABLE IF NOT EXISTS block_list ( 
+	id bigint(20) AUTO_INCREMENT NOT NULL ,
+	user_id bigint(20) NOT NULL ,
+	account_id bigint(20) NOT NULL ,
+    PRIMARY KEY(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (account_id) REFERENCES users(id)
+);`;
+  
 
 
 module.exports = {
@@ -141,5 +150,6 @@ module.exports = {
     images: images,
     interests: interests,
     user_interests: user_interests,
-    visits: visits
+    visits: visits,
+    block_list: block_list
 };

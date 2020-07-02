@@ -2,7 +2,8 @@
 	<div id="profile-img">
 		<img src="{{profile_picture}}" alt=""><br>
 		{{#if isProfileCompleted}}
-			<div class="star" data-id="{{_user.id}}"><i class="{{like}}"></i></div><br>
+			<div class="star" data-id="{{_user.id}}"><i class="{{like}}"></i></div><br><br><br><br><br>
+			<a href="/block-user/{{_user.id}}" class="delete-account btn" style="font-size: 12px;">BLOCK THIS USER</a> <br>
 		{{/if}}
 	</div>
 	<div id="about">
