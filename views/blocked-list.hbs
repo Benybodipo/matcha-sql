@@ -1,0 +1,27 @@
+<div id="notifications-list">
+    {{#if count}}
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2">User</th>
+                    <th>Action</th>
+                </tr>
+            </thead>  
+            <tbody>
+                {{#each blockedList}}
+                    <tr>
+                        <td><img src="{{image}}" alt=""></td>
+                        <td><b>{{username}}</b></td>
+                        <td>
+                            <a href="/blocked-user/{{id}}">
+                                <i class="fas fa-unlock"></i> Unblock
+                            </a> 
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <h2 style="color: gray; text-align: center;">Blocked List empty.</h2>
+    {{/if}}
+</div>
