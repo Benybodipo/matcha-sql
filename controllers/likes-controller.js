@@ -46,7 +46,7 @@ module.exports.like = function(req, res){
 	else
 	{
 		
-		like = connection.query('INSERT INTO likes(liker, liked) VALUES(?, ?);', [req.user.id, id]);
+		like = connection.query('INSERT INTO likes(liker, liked, username) VALUES(?, ?, ?);', [req.user.id, id, req.user.username]);
 		let message = `${req.user.username} liked your profile!`;
 		let link = `${req.protocol}://${req.get('host')}/user/${req.user.id}`;
 		let notification = newNotification(req.user.id, id, 2, message, link);

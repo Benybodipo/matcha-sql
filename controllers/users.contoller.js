@@ -31,7 +31,7 @@ module.exports.register = function(req, res) {
 	req.check("password").isLength({ min: 6 });
 	req.check("password2", "Password don't match").isLength({ min: 6}).equals(req.body.password);
 	
-
+ 
 	var errors = req.validationErrors();
 	
 	if (errors)
@@ -64,10 +64,10 @@ module.exports.register = function(req, res) {
 				{
 					const id = user.insertId;
 					let token = new TokenGenerator(256, TokenGenerator.BASE62);
-
+					token = token.generate();
 					//Insert confirmation link
 					sql = 'INSERT INTO links(user_id, token, type) VALUES(?, ?, ?);';
-					insert = connection.query(sql, [id, token.generate(), 1]);
+					insert = connection.query(sql, [id, token, 1]);
 
 					if (insert)
 					{

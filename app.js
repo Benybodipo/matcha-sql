@@ -53,7 +53,6 @@ app.use(session({
 		multipleStatements: true,
 		database: 'matcha'
 	}),
-	// cookie: {maxAge: 180 * 60 * 1000}
 }));
 app.use(flash());
 
@@ -174,8 +173,7 @@ function isProfileCompleted()
 	}
 }
 
-
-
+// Start the server
 app.listen(7500, function() {
 	console.log("runing on port 7500");
 });
