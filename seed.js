@@ -90,7 +90,7 @@ for (i=0; i < count; i++)
 {
 	hashPassword('Abc@123').then((password) => {
 		let birthdate = faker.date.between('1920-01-01', '2001-12-31').toISOString().split('T')[0];
-					
+		let age = getAge(new Date(birthdate));
 		let user = {
 			firstname: faker.name.findName(),
 			lastname: faker.name.lastName(),
@@ -101,14 +101,15 @@ for (i=0; i < count; i++)
 			birthday: birthdate,
 			bio: faker.lorem.paragraph(),
 			active: 1,
+			age: age
 		}
 
 		if (connection.query(`SELECT * FROM users WHERE username=? OR email=?;`, [user.username, user.email]).length)
 			i--;
 		else
 		{
-			let sql = "INSERT INTO users(first_name, last_name, username, email, password, gender, birthday, active, bio) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
-			let params = [user.firstname, user.lastname, user.username, user.email, user.password, user.gender, user.birthday, user.active, user.bio];
+			let sql = "INSERT INTO users(first_name, last_name, username, email, password, gender, birthday, active, bio, age) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			let params = [user.firstname, user.lastname, user.username, user.email, user.password, user.gender, user.birthday, user.active, user.bio, user.age];
 			user = connection.query(sql, params);
 			let id = user.insertId;
 
@@ -155,4 +156,11 @@ function between(min, max) {
 	return Math.floor(
 		Math.random() * (max - min) +  min
 	);
+}
+
+function getAge(birthday)
+{
+	var ageDifMs = Date.now() - birthday.getTime();
+	var ageDate = new Date(ageDifMs);
+	return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
