@@ -49,14 +49,14 @@ app.use(session({
 	store: new MySQLStore({
 		host: 'localhost',
 		user: 'root',
-		password: '', 
+		password: 'root', 
 		multipleStatements: true,
 		database: 'matcha'
 	}),
 }));
 app.use(flash());
-
-// PASSPORT
+  
+// PASSPORT 
 app.use(passport.initialize());
 app.use(passport.session());
 
