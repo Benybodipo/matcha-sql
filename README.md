@@ -29,3 +29,16 @@ Matcha is an online dating application that allow users to connect based on pref
 * CSS
 * Javascript (Nodejs, JQuery)
 * MySQL
+
+### Features
+* User registration
+* User login
+* User profile update
+* Chat system
+* Likes and matches wetween users
+* Block users
+* Instant notification
+* Track of visitors, fans and matches
+* Recover Password 
+* Search user
+* View single user profile
