@@ -48,8 +48,8 @@ app.use(session({
 	saveUninitialized: false,
 	store: new MySQLStore({
 		host: 'localhost',
-		user: 'root',
-		password: 'root', 
+		user: '',
+		password: '', 
 		multipleStatements: true,
 		database: 'matcha'
 	}),

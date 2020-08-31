@@ -7,8 +7,8 @@ const bcrypt 		 = require('bcryptjs');
 
 const connection = new MySql({
 	host: 'localhost',
-	user: 'root',
-	password: 'root', 
+	user: '',
+	password: '', 
 	multipleStatements: true
 });
 
