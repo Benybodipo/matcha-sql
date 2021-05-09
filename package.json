@@ -41,7 +41,7 @@
     "geoip-lite": "^1.4.1",
     "geolib": "^3.2.1",
     "geopoint": "^1.0.1",
-    "handlebars": "^4.5.3",
+    "handlebars": "^4.7.7",
     "ip-location": "^1.0.1",
     "is-online": "^8.3.1",
     "jquery": "^3.5.0",
